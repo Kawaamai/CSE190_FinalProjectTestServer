@@ -1,0 +1,22 @@
+
+# Misc
+*.txt
+*.7z
+*.zip
+*.tar.gz
+
+# Sublime text
+*.sublime-project
+*.sublime-workspace
+
+# Directories we don't ever want to commit
+bin
+obj
+ipch
+Debug
+release
+Release
+Secure
+.vs
+cov-int
+docs

@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{cf5b74da-cd4c-4df5-a7ed-6ff87d744e71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{7c226cda-30b7-4c70-a441-0c770032131c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client">
+      <UniqueIdentifier>{497b082e-38cd-4d00-9198-c8643f25255c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="networking\GameServer.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="networking\GameClient.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="networking\GameAdapter.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="TestServer\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="networking\TransformMessage.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameAdapter.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameChannel.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameConnectionConfig.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameConstants.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameMessageFactory.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameMessageType.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameTestMessage.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\NetTypes.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameServer.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\GameClient.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
