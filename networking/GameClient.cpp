@@ -3,7 +3,7 @@
 #include <iostream>
 #include <windows.h>
 #ifdef _WINUSER_
-#undef SendMessage
+#undef SendMessage // so that we can use yojimbo's SendMessage
 #endif
 
 static volatile int quit = 0;
@@ -78,7 +78,7 @@ void GameClient::Update(float dt) {
 			m_client.SendMessage((int)GameChannel::UNRELIABLE, message);
 		}
 
-		sendMessageCounter = (sendMessageCounter + 1) % 20;
+		sendMessageCounter = (sendMessageCounter + 1) % 60;
 
 		m_client.SendPackets();
 	}
