@@ -4,19 +4,27 @@
 *.7z
 *.zip
 *.tar.gz
+*.exe
+*.log
+*.tlog
+*.lastbuildstate
+*.ilk
+
+# compiled stuff
+*.obj
+vc141.idp
+vc141.idb
+vc141.pdb
+Test*.pdb
+Test*.ipdb
+*.iobj
 
 # Sublime text
 *.sublime-project
 *.sublime-workspace
 
 # Directories we don't ever want to commit
-bin
-obj
 ipch
-Debug
-release
-Release
 Secure
 .vs
 cov-int
-docs
