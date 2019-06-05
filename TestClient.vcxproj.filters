@@ -19,15 +19,9 @@
     <Filter Include="Client">
       <UniqueIdentifier>{091f514f-6745-4ff5-918c-150ed1160f9c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Server">
-      <UniqueIdentifier>{dd3e360b-6c3a-4c89-8d4f-726bb3ed7c4a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="networking\TransformMessage.h">
-      <Filter>Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="networking\GameAdapter.h">
       <Filter>Networking</Filter>
     </ClInclude>
     <ClInclude Include="networking\GameChannel.h">
@@ -54,22 +48,19 @@
     <ClInclude Include="networking\GameClient.h">
       <Filter>Client</Filter>
     </ClInclude>
-    <ClInclude Include="networking\GameServer.h">
-      <Filter>Server</Filter>
+    <ClInclude Include="networking\ClientGameAdapter.h">
+      <Filter>Networking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="networking\GameAdapter.cpp">
-      <Filter>Networking</Filter>
-    </ClCompile>
     <ClCompile Include="networking\GameClient.cpp">
       <Filter>Client</Filter>
     </ClCompile>
-    <ClCompile Include="networking\GameServer.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="TestClient\main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="networking\ClientGameAdapter.cpp">
+      <Filter>Networking</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

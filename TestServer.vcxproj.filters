@@ -22,6 +22,9 @@
     <Filter Include="Client">
       <UniqueIdentifier>{497b082e-38cd-4d00-9198-c8643f25255c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{1c57988f-e89a-406b-9907-b4c8a2905ec4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="networking\GameServer.cpp">
@@ -70,6 +73,12 @@
     </ClInclude>
     <ClInclude Include="networking\GameClient.h">
       <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PhysXServerApp.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MainGameScene.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

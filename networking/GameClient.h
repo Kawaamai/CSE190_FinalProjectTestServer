@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameAdapter.h"
+#include "ClientGameAdapter.h"
 #include "GameConnectionConfig.h"
 
 class GameClient {
@@ -9,6 +9,7 @@ public:
 	int Run();
 	void Update(float dt);
 	bool ConnectionFailed();
+	void Disconnect();
 
 private:
 	void ProcessMessages();
@@ -17,7 +18,7 @@ private:
 	void ProcessTransformMessage(TransformMessage* message);
 
 	GameConnectionConfig m_connectionConfig;
-	GameAdapter m_adapter;
+	ClientGameAdapter m_adapter;
 	yojimbo::Client m_client;
 	yojimbo::Address m_serverAddress;
 

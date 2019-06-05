@@ -22,6 +22,8 @@ GameServer::GameServer(const yojimbo::Address& address) :
 	std::cout << "Server address is " << buffer << std::endl;
 
 	// ... load game ...
+	//m_scene.SetRunning(m_running);
+	m_scene.InitScene();
 }
 
 void GameServer::Run() {
@@ -36,6 +38,16 @@ void GameServer::Run() {
 	}
 
 	m_server.Stop();
+}
+
+void GameServer::PhysicsRun() {
+	//if (m_running)
+	//	m_scene.Run();
+	while (m_running) {
+		m_scene.Update();
+	}
+
+	m_scene.Cleanup();
 }
 
 void GameServer::Update(float dt) {
@@ -53,8 +65,27 @@ void GameServer::Update(float dt) {
 	// ... process client inputs ...
 	// ... update game ...
 	// ... send game state to clietns ...
+	//m_scene.UpdateSnapshot(); // done in physic's update
+	SendSceneSnapshot();
 
 	m_server.SendPackets();
+}
+
+void GameServer::SendSceneSnapshot() {
+	m_scene.ForEachActor([&](int actorId, PxRigidActor const * const actor) {
+		PxTransform tm = actor->getGlobalPose();
+		NetTransform data(NetVec3(tm.p.x, tm.p.y, tm.p.z), NetQuat(tm.q.w, tm.q.x, tm.q.y, tm.q.z));
+		// message setup	
+		ForEachConnectedClient([&](int clientIdx) {
+			TransformMessage* message = (TransformMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::TRANSFORM_INFO);
+			message->m_data.transform = data;
+			message->m_data.int_uniqueGameObjectId = actorId;
+			m_server.SendMessage(clientIdx, (int)GameChannel::UNRELIABLE, message);
+		});
+	});
+}
+
+void GameServer::SendActorMessage() {
 }
 
 void GameServer::Stop() {
@@ -109,4 +140,12 @@ void GameServer::ProcessTransformMessage(int clientIndex, TransformMessage * mes
 	TransformMessage* testMessage = (TransformMessage*)m_server.CreateMessage(clientIndex, (int)GameMessageType::TRANSFORM_INFO);
 	m_server.SendMessage(clientIndex, (int)GameChannel::UNRELIABLE, testMessage);
 
+}
+
+void GameServer::ForEachConnectedClient(std::function<void(int)> f) {
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		if (m_server.IsClientConnected(i)) {
+			f(i);
+		}
+	}
 }

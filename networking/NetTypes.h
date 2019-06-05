@@ -10,10 +10,10 @@ public:
 
 struct NetQuat {
 public:
-	float x = 1.0f, y = 0.0f, z = 0.0f, w = 0.0f;
+	float w = 1.0f, x = 0.0f, y = 0.0f, z = 0.0f;
 
 	NetQuat() {}
-	NetQuat(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+	NetQuat(float w, float x, float y, float z) : w(w), x(x), y(y), z(z) {}
 };
 
 struct NetTransform {

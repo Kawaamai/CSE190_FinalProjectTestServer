@@ -1,6 +1,8 @@
 #include <iostream>
+#include <thread>
 #include "GameServer.h"
 #include "GameConstants.h"
+#include "PhysXServerApp.h"
 
 int main() {
 	std::cout << "Init server" << std::endl;
@@ -14,7 +16,14 @@ int main() {
 
 	GameServer server(yojimbo::Address("127.0.0.1", ServerPort));
 
-	server.Run();
+	std::cout << "starting server thread" << std::endl;
+	std::thread networkThread(&GameServer::Run, &server);
+
+	std::cout << "starting game physics thread" << std::endl;
+	std::thread physicsThread(&GameServer::PhysicsRun, &server);
+
+	networkThread.join();
+	physicsThread.join();
 
 	ShutdownYojimbo();
 

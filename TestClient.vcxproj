@@ -73,6 +73,10 @@
     <OutDir>$(SolutionDir)TestClient\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>TestClient\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)TestClient\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>TestClient\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -83,7 +87,8 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>yojimbo\windows;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>lib\yojimbo.lib;sodium.lib;mbedtls.lib;mbedx509.lib;mbedcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lib\Debug\yojimbo.lib;sodium.lib;mbedtls.lib;mbedx509.lib;mbedcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -116,29 +121,31 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.;TestClient;networking;yojimbo;yojimbo\windows;yojimbo\netcode.io;yojimbo\reliable.io;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>yojimbo\windows;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lib\Release\yojimbo.lib;sodium.lib;mbedtls.lib;mbedx509.lib;mbedcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="networking\GameAdapter.h" />
+    <ClInclude Include="networking\ClientGameAdapter.h" />
     <ClInclude Include="networking\GameChannel.h" />
     <ClInclude Include="networking\GameClient.h" />
     <ClInclude Include="networking\GameConnectionConfig.h" />
     <ClInclude Include="networking\GameConstants.h" />
     <ClInclude Include="networking\GameMessageFactory.h" />
     <ClInclude Include="networking\GameMessageType.h" />
-    <ClInclude Include="networking\GameServer.h" />
     <ClInclude Include="networking\GameTestMessage.h" />
     <ClInclude Include="networking\NetTypes.h" />
     <ClInclude Include="networking\TransformMessage.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="networking\GameAdapter.cpp" />
+    <ClCompile Include="networking\ClientGameAdapter.cpp" />
     <ClCompile Include="networking\GameClient.cpp" />
-    <ClCompile Include="networking\GameServer.cpp" />
     <ClCompile Include="TestClient\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

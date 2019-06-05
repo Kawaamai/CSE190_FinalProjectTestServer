@@ -9,13 +9,13 @@
 static volatile int quit = 0;
 
 BOOL WINAPI consoleHandler(DWORD signal) {
-	printf("something here\n");
 	if (signal == CTRL_C_EVENT) {
-		printf("something else here\n");
+		printf("ctrl-c handled\n");
 		quit = 1;
+		return TRUE;
 	}
-
-	return TRUE;
+	
+	return FALSE;
 }
 
 GameClient::GameClient(const yojimbo::Address& serverAddress) :
@@ -48,9 +48,6 @@ int GameClient::Run() {
 		}
 	} 
 
-	std::cerr << "disconnecting" << std::endl;
-	m_client.Disconnect();
-
 	return 0;
 }
 
@@ -79,13 +76,18 @@ void GameClient::Update(float dt) {
 		}
 
 		sendMessageCounter = (sendMessageCounter + 1) % 60;
-
-		m_client.SendPackets();
 	}
+
+	m_client.SendPackets();
 }
 
 bool GameClient::ConnectionFailed() {
 	return m_client.ConnectionFailed();
+}
+
+void GameClient::Disconnect() {
+	if (m_client.IsConnected())
+		m_client.Disconnect();
 }
 
 void GameClient::ProcessMessages() {
@@ -113,10 +115,10 @@ void GameClient::ProcessMessage(yojimbo::Message * message) {
 }
 
 void GameClient::ProcessGameTestMessage(GameTestMessage * message) {
-	std::cout << "Test message received from server with data " << message->m_data << std::endl;
+	std::cout << "Test message received from server with data\n" << message->m_data << std::endl;
 }
 
 void GameClient::ProcessTransformMessage(TransformMessage * message) {
-	std::cout << "Transform message received from server with data " << message->m_data << std::endl;
+	std::cout << "Transform message received from server with data:\n" << message->m_data << std::endl;
 }
 

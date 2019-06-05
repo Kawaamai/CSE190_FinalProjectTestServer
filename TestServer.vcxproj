@@ -74,6 +74,10 @@
     <OutDir>$(SolutionDir)TestServer\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>TestServer\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)TestServer\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>TestServer\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -112,7 +116,19 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>yojimbo\windows;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>lib\yojimbo.lib;sodium.lib;mbedtls.lib;mbedx509.lib;mbedcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lib\Debug\yojimbo.lib;sodium.lib;mbedtls.lib;mbedx509.lib;mbedcrypto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.;Game;TestServer;networking;yojimbo;yojimbo\windows;yojimbo\netcode.io;yojimbo\reliable.io;$(SolutionDir)PhysX\physx\include;$(SolutionDir)PhysX\physx\source\physxextensions\src;$(SolutionDir)PhysX\physx\..\pxshared\include;$(SolutionDir)PhysX\physx\source\foundation\include;$(SolutionDir)PhysX\physx\source\geomutils\include;$(SolutionDir)PhysX\physx\source\geomutils\src;$(SolutionDir)PhysX\physx\source\geomutils\src\contact;$(SolutionDir)PhysX\physx\source\geomutils\src\common;$(SolutionDir)PhysX\physx\source\geomutils\src\convex;$(SolutionDir)PhysX\physx\source\geomutils\src\distance;$(SolutionDir)PhysX\physx\source\geomutils\src\sweep;$(SolutionDir)PhysX\physx\source\geomutils\src\gjk;$(SolutionDir)PhysX\physx\source\geomutils\src\intersection;$(SolutionDir)PhysX\physx\source\geomutils\src\mesh;$(SolutionDir)PhysX\physx\source\geomutils\src\hf;$(SolutionDir)PhysX\physx\source\geomutils\src\pcm;$(SolutionDir)PhysX\physx\source\geomutils\src\ccd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;WIN64;_WINSOCK_DEPRECATED_NO_WARNINGS;PX_DEBUG=0;PX_CHECKED=1;PX_NVTX=0;PX_SUPPORT_PVD=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>yojimbo\windows;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lib\Release\yojimbo.lib;sodium.lib;mbedtls.lib;mbedx509.lib;mbedcrypto.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXPvdSDK_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXCharacterKinematic_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXExtensions_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXCooking_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXCommon_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysX_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXFoundation_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\SnippetUtils_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -122,6 +138,8 @@
     <ClCompile Include="TestServer\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\MainGameScene.h" />
+    <ClInclude Include="Game\PhysXServerApp.h" />
     <ClInclude Include="networking\GameAdapter.h" />
     <ClInclude Include="networking\GameChannel.h" />
     <ClInclude Include="networking\GameClient.h" />
