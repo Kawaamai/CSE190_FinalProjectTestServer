@@ -6,6 +6,8 @@
 #undef SendMessage // so that we can use yojimbo's SendMessage
 #endif
 
+#define GAME_DT 1.0f / 90.0f
+
 static volatile int quit = 0;
 
 BOOL WINAPI consoleHandler(DWORD signal) {
@@ -35,18 +37,28 @@ int GameClient::Run() {
 	}
 
 	while (!quit) {
-		double currentTime = yojimbo_time();
-
-		if (m_client.ConnectionFailed())
+		if (Step())
 			break;
-
-		if (m_time <= currentTime) {
-			Update(FIXED_DT);
-			m_time += FIXED_DT;
-		} else {
-			yojimbo_sleep(m_time - currentTime);
-		}
 	} 
+
+	return 0;
+}
+
+int GameClient::Step() {
+	double currentTime = yojimbo_time();
+
+	if (m_client.ConnectionFailed())
+		return 1;
+
+	if (m_time <= currentTime) {
+		//Update(FIXED_DT);
+		//m_time += FIXED_DT;
+		Update(GAME_DT);
+		m_time += GAME_DT;
+	} else {
+		//yojimbo_sleep(m_time - currentTime);
+		// simulate sleep
+	}
 
 	return 0;
 }
@@ -119,6 +131,6 @@ void GameClient::ProcessGameTestMessage(GameTestMessage * message) {
 }
 
 void GameClient::ProcessTransformMessage(TransformMessage * message) {
-	std::cout << "Transform message received from server with data:\n" << message->m_data << std::endl;
+	//std::cout << "Transform message received from server with data:\n" << message->m_data << std::endl;
 }
 

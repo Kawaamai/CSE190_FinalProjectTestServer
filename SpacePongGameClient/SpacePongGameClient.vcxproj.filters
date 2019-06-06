@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Application">
+      <UniqueIdentifier>{768e9b5d-b74d-40e1-b131-34d1bd7e7248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{86103e09-5f25-4f2b-a927-4bf3267d49c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{5a6531ad-a74c-4b44-94ca-6de271d6d4ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{af08f208-cc8a-4ad8-a8d3-48dc8a7b6eb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{efc82f21-e99f-4f47-a3cb-173feda3a4dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6bddf6ee-2424-458a-8d5b-18e050733d5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client">
+      <UniqueIdentifier>{aa2b1d12-41d9-4d77-b776-a6423e5d7d54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{b5de7cd8-fae9-4dd1-92ad-41306f08b792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{d5f61e3a-f020-4296-a63a-2859df3a1560}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Minimal\PhysXApp.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\ExampleApp.hpp">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\GlfwApp.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\RiftApp.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\TestPhysicsApp.hpp">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\AvatarHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\BasicShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Converter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\ControllerHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Lighting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\oglShaderAttributes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\OvrHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\RingBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\TextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\TexturedCube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\TexturedPlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\TestCubeScene.hpp">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\SphereScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\TestPhysicsScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\GameClient.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\ClientGameAdapter.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\GameChannel.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\GameConnectionConfig.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\GameConstants.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\GameMessageFactory.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\GameMessageType.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\GameTestMessage.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\NetTypes.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\TransformMessage.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\MainGameScene.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\PhysXServerApp.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Minimal\Minimal.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\Minimal\fonts\arial.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Minimal\basicVertex.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\cube\back.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\cube\down.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\cube\front.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\cube\left.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\cube\right.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\cube\up.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\skybox\back.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\skybox\down.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\skybox\front.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\skybox\left.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\skybox\right.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\skybox\up.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Minimal\AvatarFragmentShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\AvatarFragmentShaderPBS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\AvatarFragmentShader_CombinedMesh.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\AvatarVertexShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\basicColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\basicColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\basicFragment.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\basicTexture.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\basicTexture.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\brightnessFalloff.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\brightnessFalloff.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\defCubeFS.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\defCubeVS.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\lightedColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\lightedColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\oglBasicColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\oglBasicColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\skybox.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\skybox.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\textShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\textShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\vignette.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\vignette.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Minimal\SphereScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\TestPhysicsScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\BasicShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\ControllerHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\Plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\TexturedCube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\TexturedPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\GameClient.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\ClientGameAdapter.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
