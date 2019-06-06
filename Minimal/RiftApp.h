@@ -5,7 +5,9 @@
 #include <array>
 #include "Core.h"
 #include "GlfwApp.h"
-#include "PhysXApp.h"
+//#include "PhysXApp.h"
+//#include "Game/PhysXServerApp.h"
+#include "../Game/PhysXServerApp.h"
 #include "AvatarHandler.h"
 #include <glm/gtc/constants.hpp>
 
@@ -31,7 +33,7 @@ public:
 	}
 };
 
-class RiftApp : public GlfwApp, public RiftManagerApp, public PhysXApp {
+class RiftApp : public GlfwApp, public RiftManagerApp, public PhysXServerApp {
 public:
 
 private:
@@ -212,6 +214,7 @@ protected:
 
 	void update() override {
 		stepPhysics(true);
+		UpdateSnapshot();
 	}
 
 	void lateUpdate() override {

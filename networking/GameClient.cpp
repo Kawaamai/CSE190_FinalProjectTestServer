@@ -74,20 +74,20 @@ void GameClient::Update(float dt) {
 		// ... do connected stuff ...
 
 		// send a message when space is pressed
-		if (sendMessageCounter == 0) {
-			//GameTestMessage* message = (GameTestMessage*)m_client.CreateMessage((int)GameMessageType::TEST);
-			//message->m_data = 42;
-			//m_client.SendMessage((int)GameChannel::RELIABLE, message);
-			TransformMessage* message = (TransformMessage*)m_client.CreateMessage((int)GameMessageType::TRANSFORM_INFO);
-			NetTransform data(NetVec3(1.0f, 2.0f, 3.0f), NetQuat(4.0f, 5.0f, 6.0f, 7.0f));
-			//message->m_data.transform.position = NetVec3(1.0f, 2.0f, 3.0f);
-			//message->m_data.transform.orientation = NetQuat(4.0f, 5.0f, 6.0f, 7.0f);
-			message->m_data.transform = data;
-			message->m_data.int_uniqueGameObjectId = 3;
-			m_client.SendMessage((int)GameChannel::UNRELIABLE, message);
-		}
+		//if (sendMessageCounter == 0) {
+		//	//GameTestMessage* message = (GameTestMessage*)m_client.CreateMessage((int)GameMessageType::TEST);
+		//	//message->m_data = 42;
+		//	//m_client.SendMessage((int)GameChannel::RELIABLE, message);
+		//	TransformMessage* message = (TransformMessage*)m_client.CreateMessage((int)GameMessageType::TRANSFORM_INFO);
+		//	NetTransform data(NetVec3(1.0f, 2.0f, 3.0f), NetQuat(4.0f, 5.0f, 6.0f, 7.0f));
+		//	//message->m_data.transform.position = NetVec3(1.0f, 2.0f, 3.0f);
+		//	//message->m_data.transform.orientation = NetQuat(4.0f, 5.0f, 6.0f, 7.0f);
+		//	message->m_data.transform = data;
+		//	message->m_data.int_uniqueGameObjectId = 3;
+		//	m_client.SendMessage((int)GameChannel::UNRELIABLE, message);
+		//}
 
-		sendMessageCounter = (sendMessageCounter + 1) % 60;
+		//sendMessageCounter = (sendMessageCounter + 1) % 60;
 	}
 
 	m_client.SendPackets();

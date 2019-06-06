@@ -12,7 +12,7 @@ public:
 	bool ConnectionFailed();
 	void Disconnect();
 
-private:
+protected:
 	void ProcessMessages();
 	void ProcessMessage(yojimbo::Message* message);
 	virtual void ProcessGameTestMessage(GameTestMessage* message);

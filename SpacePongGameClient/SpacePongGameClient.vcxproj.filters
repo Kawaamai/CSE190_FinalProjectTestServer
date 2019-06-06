@@ -153,6 +153,12 @@
     <ClInclude Include="..\Game\PhysXServerApp.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="..\Game\GameInteractionInterface.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\SweepForceInput.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Minimal\Minimal.rc">

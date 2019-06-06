@@ -4,6 +4,7 @@
 #include "GameAdapter.h"
 #include "GameConnectionConfig.h"
 #include "MainGameScene.h"
+#include "GameMessageFactory.h"
 #include <functional>
 
 class GameServer {
@@ -30,7 +31,8 @@ private:
 	void ProcessMessages();
 	void ProcessMessage(int clientIndex, yojimbo::Message* message);
 	void ProcessGameTestMessage(int clientIndex, GameTestMessage* message);
-	void ProcessTransformMessage(int clientIndex, TransformMessage* message);
+	virtual void ProcessTransformMessage(int clientIndex, TransformMessage* message);
+	virtual void ProcessSweepForceInputMessage(int clientIndex, SweepForceInputMessage* message);
 
 	void ForEachConnectedClient(std::function<void(int)> f);
 

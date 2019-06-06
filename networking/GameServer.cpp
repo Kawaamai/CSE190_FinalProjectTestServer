@@ -74,7 +74,9 @@ void GameServer::Update(float dt) {
 void GameServer::SendSceneSnapshot() {
 	m_scene.ForEachActor([&](int actorId, PxRigidActor const * const actor) {
 		PxTransform tm = actor->getGlobalPose();
-		NetTransform data(NetVec3(tm.p.x, tm.p.y, tm.p.z), NetQuat(tm.q.w, tm.q.x, tm.q.y, tm.q.z));
+		//NetTransform data(NetVec3(tm.p.x, tm.p.y, tm.p.z), NetQuat(tm.q.w, tm.q.x, tm.q.y, tm.q.z));
+		NetTransform data;
+		converter::PhysXTmToNetTm(tm, data);
 		// message setup	
 		ForEachConnectedClient([&](int clientIdx) {
 			TransformMessage* message = (TransformMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::TRANSFORM_INFO);
@@ -123,6 +125,8 @@ void GameServer::ProcessMessage(int clientIndex, yojimbo::Message * message) {
 	case (int)GameMessageType::TRANSFORM_INFO:
 		ProcessTransformMessage(clientIndex, (TransformMessage*)message);
 		break;
+	case (int)GameMessageType::SWEEP_FORCE_INPUT:
+		ProcessSweepForceInputMessage(clientIndex, (SweepForceInputMessage*)message);
 	default:
 		break;
 	}
@@ -140,6 +144,11 @@ void GameServer::ProcessTransformMessage(int clientIndex, TransformMessage * mes
 	TransformMessage* testMessage = (TransformMessage*)m_server.CreateMessage(clientIndex, (int)GameMessageType::TRANSFORM_INFO);
 	m_server.SendMessage(clientIndex, (int)GameChannel::UNRELIABLE, testMessage);
 
+}
+
+void GameServer::ProcessSweepForceInputMessage(int clientIndex, SweepForceInputMessage * message) {
+	std::cerr << "process sweep force input message" << std::endl;
+	m_scene.ProcessSweepForceInputMessage(message->m_data);
 }
 
 void GameServer::ForEachConnectedClient(std::function<void(int)> f) {

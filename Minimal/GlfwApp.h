@@ -26,6 +26,7 @@ protected:
 	ivec2 windowPosition;
 	GLFWwindow * window{ nullptr };
 	unsigned int frame{ 0 };
+	bool glfwapp_isrunning{ true };
 
 public:
 	GlfwApp() {
@@ -59,7 +60,7 @@ public:
 		
 		postInit();
 
-		while (!glfwWindowShouldClose(window)) {
+		while (!glfwWindowShouldClose(window) && glfwapp_isrunning) {
 			++frame;
 			glfwPollEvents();
 			update();

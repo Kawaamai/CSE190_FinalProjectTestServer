@@ -5,6 +5,8 @@
 #include "RiftApp.h"
 #include "GameClient.h"
 #include "Converter.h"
+#include "GameInteractionInterface.h"
+#include "GameMessageFactory.h"
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -90,6 +92,16 @@ protected:
 			uiFont->renderText(projection * glm::inverse(headPose) * gameStartTextTransform, gameStartText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
 			uiFont->renderText(projection * glm::inverse(headPose) * scoreTextTransform, scoreDisplayText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
 		}
+
+		// render visual of force push
+		glm::vec3 dir = glm::mat4_cast(controllers->getHandRotation(ovrHand_Right)) * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
+		glm::vec3 pos = player.position * glm::vec4(controllers->getHandPosition(ovrHand_Right), 1.0f);
+		glm::vec3 pos2 = pos + (2.0f * dir);
+
+		glm::mat4 _toWorld = glm::translate(pos) * glm::scale(glm::vec3(.03f)) * glm::mat4_cast(controllers->getHandRotation(ovrHand_Right));
+		sphereScene->renderCube(projection, view, _toWorld);
+		_toWorld = glm::translate(pos2) * glm::scale(glm::vec3(.03f));
+		sphereScene->renderCube(projection, view, _toWorld);
 	}
 
 	void renderPxScene(const glm::mat4 & projection, const glm::mat4 & view) {
@@ -126,22 +138,17 @@ protected:
 
 			}
 		}
-		glm::vec3 dir = glm::mat4_cast(controllers->getHandRotation(ovrHand_Right)) * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
-		glm::vec3 pos = player.position * glm::vec4(controllers->getHandPosition(ovrHand_Right), 1.0f);
-		glm::vec3 pos2 = pos + (2.0f * dir);
-
-		glm::mat4 _toWorld = glm::translate(pos) * glm::scale(glm::vec3(.03f)) * glm::mat4_cast(controllers->getHandRotation(ovrHand_Right));
-		sphereScene->renderCube(projection, view, _toWorld);
-		_toWorld = glm::translate(pos2) * glm::scale(glm::vec3(.03f));
-		sphereScene->renderCube(projection, view, _toWorld);
-
 	}
 
 
-private:
+protected:
 	
 	void update() override {
-		Step();
+		if (Step()) {
+			// disconnect
+			std::cerr << "connection failed" << std::endl;
+			glfwapp_isrunning = false;
+		}
 		RiftApp::update();
 		controllers->updateHandState();
 	}
@@ -154,46 +161,24 @@ private:
 			PxVec3 sweepPos = converter::glmVec3ToPhysXVec3(player.position * glm::vec4(controllers->getHandPosition(ovrHand_Right), 1.0f));
 			//std::cerr << "sweepDir: " << sweepDir.x << " " << sweepDir.y << " " << sweepDir.z << std::endl;
 			//std::cerr << "sweepPos: " << sweepPos.x << " " << sweepPos.y << " " << sweepPos.z << std::endl;
-			PxTransform sweepTransform(sweepPos);
-			sweepDir.normalize();
-			PxSweepHit hitInfo;
-			PxHitFlags hitFlags = PxHitFlag::ePOSITION;
-			PxReal inflation = 0.0f;
-			PxSphereGeometry sweepSphere = PxSphereGeometry(0.2f);
-			//PxU32 hitcount = PxGeometryQuery::sweep(sweepDir, 1.0f, sweepSphere, )
 			PxScene* scene;
 			PxGetPhysics().getScenes(&scene, 1);
-			PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
-			if (nbActors) {
-				std::vector<PxRigidActor*> actors(nbActors);
-				scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-				PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
-				for (PxU32 i = 0; i < nbActors; i++) {
-					const PxU32 nbShapes = actors[i]->getNbShapes();
-					PX_ASSERT(nbShapes <= MAX_NUM_ACTOR_SHAPES);
-					actors[i]->getShapes(shapes, nbShapes);
 
-					// only have one shape
-					for (PxU32 j = 0; j < nbShapes; j++) {
-						const PxMat44 shapePose(PxShapeExt::getGlobalPose(*shapes[j], *actors[i]));
-						PxTransform tm = PxShapeExt::getGlobalPose(*shapes[j], *actors[i]);
-						const PxGeometry geom = shapes[j]->getGeometry().any();
-						switch (geom.getType()) {
-						case PxGeometryType::eBOX: {
-							PxU32 hitcount = PxGeometryQuery::sweep(sweepDir, 2.0f, sweepSphere, sweepTransform, geom, tm, hitInfo, hitFlags);
-							//std::cerr << hitcount << std::endl;
-							if (hitcount)
-								reinterpret_cast<PxRigidBody*>(actors[i])->addForce(sweepDir * 50.0f);
-							// TODO: add in early break
-							break;
-						}
-						default:
-							break;
-						}
-					}
-				}
+			AddSweepPushForce(scene, sweepDir, sweepPos);
+
+			if (m_client.IsConnected()) {
+				std::cerr << "send sweep force" << std::endl;
+				SweepForceInputMessage* message = (SweepForceInputMessage*)m_client.CreateMessage((int)GameMessageType::SWEEP_FORCE_INPUT);
+				NetVec3 net_sweepDir, net_sweepPos;
+				converter::PhysXVec3ToNetVec3(sweepDir, net_sweepDir);
+				converter::PhysXVec3ToNetVec3(sweepPos, net_sweepPos);
+				//std::cerr << "dir: " << net_sweepDir.x << ", " << net_sweepDir.y << ", " << net_sweepDir.z << std::endl;
+				//std::cerr << "pos: " << net_sweepPos.x << ", " << net_sweepPos.y << ", " << net_sweepPos.z << std::endl;
+
+				message->m_data.sweepDir = net_sweepDir;
+				message->m_data.sweepPos = net_sweepPos;
+				m_client.SendMessage((int)GameChannel::RELIABLE, message);
 			}
-
 		}
 	}
 
@@ -220,6 +205,24 @@ private:
 		case PxGeometryType::ePLANE:
 			break;
 		}
+	}
+
+protected:
+
+	void ProcessTransformMessage(TransformMessage * message) {
+		// TODO: timestamp
+		unsigned int actorId = message->m_data.int_uniqueGameObjectId;
+		//std::cerr << actorId << std::endl;
+		if (actorId >= m_numActors || actorId >= m_actors.size()) {
+			std::cerr << "ERROR: transform gameobjec id " << actorId << " is not in scene (" << m_numActors << ")" << std::endl;
+			return;
+		}
+		PxTransform tm;
+		converter::NetTmToPhysXTm(message->m_data.transform, tm);
+		if (actorId == 1) {
+			std::cerr << "from message " << tm.p.x << std::endl;
+		}
+		//m_actors.at(actorId)->setGlobalPose(tm);
 	}
 };
 

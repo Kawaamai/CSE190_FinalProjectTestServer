@@ -85,7 +85,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.;$(Projectname);$(SolutionDir)networking;$(SolutionDir)yojimbo;$(SolutionDir)yojimbo\windows;$(SolutionDir)yojimbo\netcode.io;$(SolutionDir)yojimbo\reliable.io;$(SolutionDir)PhysX\physx\include;$(SolutionDir)PhysX\physx\source\physxextensions\src;$(SolutionDir)PhysX\physx\..\pxshared\include;$(SolutionDir)PhysX\physx\source\foundation\include;$(SolutionDir)PhysX\physx\source\geomutils\include;$(SolutionDir)PhysX\physx\source\geomutils\src;$(SolutionDir)PhysX\physx\source\geomutils\src\contact;$(SolutionDir)PhysX\physx\source\geomutils\src\common;$(SolutionDir)PhysX\physx\source\geomutils\src\convex;$(SolutionDir)PhysX\physx\source\geomutils\src\distance;$(SolutionDir)PhysX\physx\source\geomutils\src\sweep;$(SolutionDir)PhysX\physx\source\geomutils\src\gjk;$(SolutionDir)PhysX\physx\source\geomutils\src\intersection;$(SolutionDir)PhysX\physx\source\geomutils\src\mesh;$(SolutionDir)PhysX\physx\source\geomutils\src\hf;$(SolutionDir)PhysX\physx\source\geomutils\src\pcm;$(SolutionDir)PhysX\physx\source\geomutils\src\ccd;$(SolutionDir)Include\OVRAvatarSDK;$(SolutionDir)Include\LibOVR;$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)Game;$(Projectname);$(SolutionDir)networking;$(SolutionDir)yojimbo;$(SolutionDir)yojimbo\windows;$(SolutionDir)yojimbo\netcode.io;$(SolutionDir)yojimbo\reliable.io;$(SolutionDir)PhysX\physx\include;$(SolutionDir)PhysX\physx\source\physxextensions\src;$(SolutionDir)PhysX\physx\..\pxshared\include;$(SolutionDir)PhysX\physx\source\foundation\include;$(SolutionDir)PhysX\physx\source\geomutils\include;$(SolutionDir)PhysX\physx\source\geomutils\src;$(SolutionDir)PhysX\physx\source\geomutils\src\contact;$(SolutionDir)PhysX\physx\source\geomutils\src\common;$(SolutionDir)PhysX\physx\source\geomutils\src\convex;$(SolutionDir)PhysX\physx\source\geomutils\src\distance;$(SolutionDir)PhysX\physx\source\geomutils\src\sweep;$(SolutionDir)PhysX\physx\source\geomutils\src\gjk;$(SolutionDir)PhysX\physx\source\geomutils\src\intersection;$(SolutionDir)PhysX\physx\source\geomutils\src\mesh;$(SolutionDir)PhysX\physx\source\geomutils\src\hf;$(SolutionDir)PhysX\physx\source\geomutils\src\pcm;$(SolutionDir)PhysX\physx\source\geomutils\src\ccd;$(SolutionDir)Include\OVRAvatarSDK;$(SolutionDir)Include\LibOVR;$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;WIN64;_WINSOCK_DEPRECATED_NO_WARNINGS;PX_DEBUG=0;PX_CHECKED=1;PX_NVTX=0;PX_SUPPORT_PVD=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Game\GameInteractionInterface.h" />
     <ClInclude Include="..\Game\MainGameScene.h" />
     <ClInclude Include="..\Game\PhysXServerApp.h" />
     <ClInclude Include="..\Minimal\AvatarHandler.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="..\networking\GameMessageType.h" />
     <ClInclude Include="..\networking\GameTestMessage.h" />
     <ClInclude Include="..\networking\NetTypes.h" />
+    <ClInclude Include="..\networking\SweepForceInput.h" />
     <ClInclude Include="..\networking\TransformMessage.h" />
   </ItemGroup>
   <ItemGroup>

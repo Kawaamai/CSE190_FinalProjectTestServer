@@ -1,6 +1,8 @@
 #pragma once
 #include "PxPhysicsAPI.h"
 #include "../snippets/snippetutils/SnippetUtils.h"
+#include <vector>
+#include <functional>
 
 using namespace physx;
 
@@ -25,7 +27,11 @@ protected:
 
 	PxPvd*                  gPvd = NULL;
 
-	PxReal stackZ = 2.0f;
+	//PxReal stackZ = 2.0f;
+	PxReal stackZ = -1.0f;
+
+	PxU32 m_numActors = 0;
+	std::vector<PxRigidActor*> m_actors;
 
 	void initPhysics(bool interactive) {
 		printf("init physics\n");
@@ -120,6 +126,35 @@ protected:
 
 		if(!interactive)
 			createDynamic(PxTransform(PxVec3(0,40,100)), PxSphereGeometry(10), PxVec3(0,-50,-100));
+	}
+
+	void UpdateSnapshot() {
+		PxScene* scene;
+		PxGetPhysics().getScenes(&scene, 1);
+		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
+		if (m_numActors != nbActors) {
+			m_actors.resize(nbActors);
+			m_numActors = nbActors;
+			std::cerr << "resize actor snapshot" << std::endl;
+		}
+		if (nbActors) {
+			//std::vector<PxRigidActor*> actors(nbActors);
+			//std::unique_ptr<std::vector<PxRigidActor*>> p_actors = std::make_unique<std::vector<PxRigidActor*>>(nbActors);
+			//scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(p_actors->data()), nbActors);
+			//m_actorsPtr = std::move(p_actors);
+			//std::cerr << m_actorsPtr->size() << std::endl;
+			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&m_actors[0]), nbActors);
+			//std::cerr << m_actors.size() << std::endl;
+		}
+		if (1 < nbActors)
+			std::cerr << "snapshot " << m_actors[1]->getGlobalPose().p.x << std::endl;
+	}
+
+public:
+	void ForEachActor(std::function<void(int, PxRigidActor const * const)> f) {
+		for (PxU32 i = 0; i < m_numActors; i++) {
+			f(i, m_actors.at(i));
+		}
 	}
 };
 
