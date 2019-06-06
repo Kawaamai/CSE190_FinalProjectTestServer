@@ -18,6 +18,8 @@ vc141.pdb
 Test*.pdb
 Test*.ipdb
 *.iobj
+Minimal.ipdb
+SpacePongGameClient.ipdb
 
 # Sublime text
 *.sublime-project
