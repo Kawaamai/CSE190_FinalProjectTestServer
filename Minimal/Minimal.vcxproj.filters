@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{c04dc7d4-19e2-41c8-bc6d-d4dc5569e350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{8d6dd071-1be2-4942-8e48-5ceb373bd585}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{d4c4077d-8105-4b71-8279-2f1b28360a0c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturedCube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturedPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPhysicsScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="basicVertex.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox\back.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox\down.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox\front.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox\left.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox\right.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox\up.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cube\back.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cube\down.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cube\front.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cube\left.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cube\right.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cube\up.ppm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vignette.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="vignette.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="textShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="textShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="skybox.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="skybox.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="oglBasicColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="oglBasicColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lightedColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lightedColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="defCubeVS.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="defCubeFS.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="brightnessFalloff.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="brightnessFalloff.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="basicTexture.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="basicTexture.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="basicFragment.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="basicColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="basicColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="AvatarVertexShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="AvatarFragmentShaderPBS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="AvatarFragmentShader_CombinedMesh.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="AvatarFragmentShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="oglShaderAttributes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OvrHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AvatarHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lighting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturedCube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RingBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturedPlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlfwApp.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="ExampleApp.hpp">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="RiftApp.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCubeScene.hpp">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPhysicsScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPhysicsApp.hpp">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysXApp.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Converter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="fonts\arial.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Minimal.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

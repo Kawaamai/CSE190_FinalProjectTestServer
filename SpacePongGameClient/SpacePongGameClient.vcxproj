@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{5FF3027D-5E4C-4DB9-91DD-90486167450C}</ProjectGuid>
+    <RootNamespace>SpacePongGameClient</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)$(Projectname)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Projectname)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)$(Projectname)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Projectname)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)Game;$(Projectname);$(SolutionDir)networking;$(SolutionDir)yojimbo;$(SolutionDir)yojimbo\windows;$(SolutionDir)yojimbo\netcode.io;$(SolutionDir)yojimbo\reliable.io;$(SolutionDir)PhysX\physx\include;$(SolutionDir)PhysX\physx\source\physxextensions\src;$(SolutionDir)PhysX\physx\..\pxshared\include;$(SolutionDir)PhysX\physx\source\foundation\include;$(SolutionDir)PhysX\physx\source\geomutils\include;$(SolutionDir)PhysX\physx\source\geomutils\src;$(SolutionDir)PhysX\physx\source\geomutils\src\contact;$(SolutionDir)PhysX\physx\source\geomutils\src\common;$(SolutionDir)PhysX\physx\source\geomutils\src\convex;$(SolutionDir)PhysX\physx\source\geomutils\src\distance;$(SolutionDir)PhysX\physx\source\geomutils\src\sweep;$(SolutionDir)PhysX\physx\source\geomutils\src\gjk;$(SolutionDir)PhysX\physx\source\geomutils\src\intersection;$(SolutionDir)PhysX\physx\source\geomutils\src\mesh;$(SolutionDir)PhysX\physx\source\geomutils\src\hf;$(SolutionDir)PhysX\physx\source\geomutils\src\pcm;$(SolutionDir)PhysX\physx\source\geomutils\src\ccd;$(SolutionDir)Include\OVRAvatarSDK;$(SolutionDir)Include\LibOVR;$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;WIN64;_WINSOCK_DEPRECATED_NO_WARNINGS;PX_DEBUG=0;PX_CHECKED=1;PX_NVTX=0;PX_SUPPORT_PVD=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;$(SolutionDir)yojimbo\windows</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Release\yojimbo.lib;sodium.lib;mbedtls.lib;mbedx509.lib;mbedcrypto.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXPvdSDK_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXVehicle_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXCharacterKinematic_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXExtensions_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXCooking_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXCommon_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysX_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\PhysXFoundation_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\release\SnippetUtils_static_64.lib;libovravatar.lib;LibOVR.lib;opengl32.lib;glu32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.;$(Projectname);networking;yojimbo;yojimbo\windows;yojimbo\netcode.io;yojimbo\reliable.io;$(SolutionDir)PhysX\physx\include;$(SolutionDir)PhysX\physx\source\physxextensions\src;$(SolutionDir)PhysX\physx\..\pxshared\include;$(SolutionDir)PhysX\physx\source\foundation\include;$(SolutionDir)PhysX\physx\source\geomutils\include;$(SolutionDir)PhysX\physx\source\geomutils\src;$(SolutionDir)PhysX\physx\source\geomutils\src\contact;$(SolutionDir)PhysX\physx\source\geomutils\src\common;$(SolutionDir)PhysX\physx\source\geomutils\src\convex;$(SolutionDir)PhysX\physx\source\geomutils\src\distance;$(SolutionDir)PhysX\physx\source\geomutils\src\sweep;$(SolutionDir)PhysX\physx\source\geomutils\src\gjk;$(SolutionDir)PhysX\physx\source\geomutils\src\intersection;$(SolutionDir)PhysX\physx\source\geomutils\src\mesh;$(SolutionDir)PhysX\physx\source\geomutils\src\hf;$(SolutionDir)PhysX\physx\source\geomutils\src\pcm;$(SolutionDir)PhysX\physx\source\geomutils\src\ccd;$(SolutionDir)Include\OVRAvatarSDK;$(SolutionDir)Include\LibOVR;$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WIN32;WIN64;_WINSOCK_DEPRECATED_NO_WARNINGS;PX_DEBUG=1;PX_CHECKED=1;PX_NVTX=0;PX_SUPPORT_PVD=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>Debug\yojimbo.lib;sodium.lib;mbedtls.lib;mbedx509.lib;mbedcrypto.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\PhysXPvdSDK_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\PhysXVehicle_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\PhysXCharacterKinematic_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\PhysXExtensions_static_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\PhysXCooking_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\PhysXCommon_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\PhysX_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\PhysXFoundation_64.lib;$(SolutionDir)PhysX\physx\bin\win.x86_64.vc141.mt\debug\SnippetUtils_static_64.lib;libovravatar.lib;LibOVR.lib;opengl32.lib;glu32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;$(SolutionDir)yojimbo\windows</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Game\GameInteractionInterface.h" />
+    <ClInclude Include="..\Game\MainGameScene.h" />
+    <ClInclude Include="..\Game\PhysXServerApp.h" />
+    <ClInclude Include="..\Game\Player.h" />
+    <ClInclude Include="..\Minimal\AvatarHandler.h" />
+    <ClInclude Include="..\Minimal\BasicShader.h" />
+    <ClInclude Include="..\Minimal\ControllerHandler.h" />
+    <ClInclude Include="..\Minimal\Converter.h" />
+    <ClInclude Include="..\Minimal\Core.h" />
+    <ClInclude Include="..\Minimal\Cube.h" />
+    <ClInclude Include="..\Minimal\ExampleApp.hpp" />
+    <ClInclude Include="..\Minimal\GlfwApp.h" />
+    <ClInclude Include="..\Minimal\Lighting.h" />
+    <ClInclude Include="..\Minimal\Mesh.h" />
+    <ClInclude Include="..\Minimal\Model.h" />
+    <ClInclude Include="..\Minimal\oglShaderAttributes.h" />
+    <ClInclude Include="..\Minimal\OvrHelper.h" />
+    <ClInclude Include="..\Minimal\PhysXApp.h" />
+    <ClInclude Include="..\Minimal\Plane.h" />
+    <ClInclude Include="..\Minimal\PlayerClient.h" />
+    <ClInclude Include="..\Minimal\resource.h" />
+    <ClInclude Include="..\Minimal\RiftApp.h" />
+    <ClInclude Include="..\Minimal\RingBuffer.h" />
+    <ClInclude Include="..\Minimal\Shader.h" />
+    <ClInclude Include="..\Minimal\Skybox.h" />
+    <ClInclude Include="..\Minimal\SphereScene.h" />
+    <ClInclude Include="..\Minimal\stb_image.h" />
+    <ClInclude Include="..\Minimal\TestCubeScene.hpp" />
+    <ClInclude Include="..\Minimal\TestPhysicsApp.hpp" />
+    <ClInclude Include="..\Minimal\TestPhysicsScene.h" />
+    <ClInclude Include="..\Minimal\TextRenderer.h" />
+    <ClInclude Include="..\Minimal\TexturedCube.h" />
+    <ClInclude Include="..\Minimal\TexturedPlane.h" />
+    <ClInclude Include="..\networking\ClientGameAdapter.h" />
+    <ClInclude Include="..\networking\GameChannel.h" />
+    <ClInclude Include="..\networking\GameClient.h" />
+    <ClInclude Include="..\networking\GameConnectionConfig.h" />
+    <ClInclude Include="..\networking\GameConstants.h" />
+    <ClInclude Include="..\networking\GameMessageFactory.h" />
+    <ClInclude Include="..\networking\GameMessageType.h" />
+    <ClInclude Include="..\networking\GameTestMessage.h" />
+    <ClInclude Include="..\networking\NetTypes.h" />
+    <ClInclude Include="..\networking\SweepForceInput.h" />
+    <ClInclude Include="..\networking\TransformMessage.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Minimal\Minimal.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\Minimal\fonts\arial.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Minimal\AvatarFragmentShader.glsl" />
+    <None Include="..\Minimal\AvatarFragmentShaderPBS.glsl" />
+    <None Include="..\Minimal\AvatarFragmentShader_CombinedMesh.glsl" />
+    <None Include="..\Minimal\AvatarVertexShader.glsl" />
+    <None Include="..\Minimal\basicColor.frag" />
+    <None Include="..\Minimal\basicColor.vert" />
+    <None Include="..\Minimal\basicFragment.fs" />
+    <None Include="..\Minimal\basicTexture.frag" />
+    <None Include="..\Minimal\basicTexture.vert" />
+    <None Include="..\Minimal\basicVertex.vs" />
+    <None Include="..\Minimal\brightnessFalloff.frag" />
+    <None Include="..\Minimal\brightnessFalloff.vert" />
+    <None Include="..\Minimal\cube\back.ppm" />
+    <None Include="..\Minimal\cube\down.ppm" />
+    <None Include="..\Minimal\cube\front.ppm" />
+    <None Include="..\Minimal\cube\left.ppm" />
+    <None Include="..\Minimal\cube\right.ppm" />
+    <None Include="..\Minimal\cube\up.ppm" />
+    <None Include="..\Minimal\defCubeFS.fs" />
+    <None Include="..\Minimal\defCubeVS.vs" />
+    <None Include="..\Minimal\lightedColor.frag" />
+    <None Include="..\Minimal\lightedColor.vert" />
+    <None Include="..\Minimal\oglBasicColor.frag" />
+    <None Include="..\Minimal\oglBasicColor.vert" />
+    <None Include="..\Minimal\shader.frag" />
+    <None Include="..\Minimal\shader.vert" />
+    <None Include="..\Minimal\skybox.frag" />
+    <None Include="..\Minimal\skybox.vert" />
+    <None Include="..\Minimal\skybox\back.ppm" />
+    <None Include="..\Minimal\skybox\down.ppm" />
+    <None Include="..\Minimal\skybox\front.ppm" />
+    <None Include="..\Minimal\skybox\left.ppm" />
+    <None Include="..\Minimal\skybox\right.ppm" />
+    <None Include="..\Minimal\skybox\up.ppm" />
+    <None Include="..\Minimal\textShader.frag" />
+    <None Include="..\Minimal\textShader.vert" />
+    <None Include="..\Minimal\vignette.frag" />
+    <None Include="..\Minimal\vignette.vert" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Minimal\BasicShader.cpp" />
+    <ClCompile Include="..\Minimal\ControllerHandler.cpp" />
+    <ClCompile Include="..\Minimal\Cube.cpp" />
+    <ClCompile Include="..\Minimal\main.cpp" />
+    <ClCompile Include="..\Minimal\Model.cpp" />
+    <ClCompile Include="..\Minimal\Plane.cpp" />
+    <ClCompile Include="..\Minimal\Skybox.cpp" />
+    <ClCompile Include="..\Minimal\SphereScene.cpp" />
+    <ClCompile Include="..\Minimal\TestPhysicsScene.cpp" />
+    <ClCompile Include="..\Minimal\TexturedCube.cpp" />
+    <ClCompile Include="..\Minimal\TexturedPlane.cpp" />
+    <ClCompile Include="..\networking\ClientGameAdapter.cpp" />
+    <ClCompile Include="..\networking\GameClient.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets" Condition="Exists('..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" />
+    <Import Project="..\packages\Assimp.3.0.0\build\native\Assimp.targets" Condition="Exists('..\packages\Assimp.3.0.0\build\native\Assimp.targets')" />
+    <Import Project="..\packages\freetype.redist.2.8.0.1\build\native\freetype.redist.targets" Condition="Exists('..\packages\freetype.redist.2.8.0.1\build\native\freetype.redist.targets')" />
+    <Import Project="..\packages\freetype.2.8.0.1\build\native\freetype.targets" Condition="Exists('..\packages\freetype.2.8.0.1\build\native\freetype.targets')" />
+    <Import Project="..\packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets" Condition="Exists('..\packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" />
+    <Import Project="..\packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets" Condition="Exists('..\packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" />
+    <Import Project="..\packages\oglplus.0.67.0\build\native\oglplus.targets" Condition="Exists('..\packages\oglplus.0.67.0\build\native\oglplus.targets')" />
+    <Import Project="..\packages\glm.0.9.8.5\build\native\glm.targets" Condition="Exists('..\packages\glm.0.9.8.5\build\native\glm.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\Assimp.3.0.0\build\native\Assimp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Assimp.3.0.0\build\native\Assimp.targets'))" />
+    <Error Condition="!Exists('..\packages\freetype.redist.2.8.0.1\build\native\freetype.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\freetype.redist.2.8.0.1\build\native\freetype.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\freetype.2.8.0.1\build\native\freetype.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\freetype.2.8.0.1\build\native\freetype.targets'))" />
+    <Error Condition="!Exists('..\packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\nupengl.core.redist.0.1.0.1\build\native\nupengl.core.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\nupengl.core.0.1.0.1\build\native\nupengl.core.targets'))" />
+    <Error Condition="!Exists('..\packages\oglplus.0.67.0\build\native\oglplus.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\oglplus.0.67.0\build\native\oglplus.targets'))" />
+    <Error Condition="!Exists('..\packages\glm.0.9.8.5\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.0.9.8.5\build\native\glm.targets'))" />
+  </Target>
+</Project>

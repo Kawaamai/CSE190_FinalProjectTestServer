@@ -7,15 +7,22 @@ class GameClient {
 public:
 	GameClient(const yojimbo::Address& serverAddress);
 	int Run();
+	int Step();
 	void Update(float dt);
 	bool ConnectionFailed();
 	void Disconnect();
 
-private:
+protected:
+	// message sending
+	virtual void SendEveryUpdate() {}
+
+	// message processing
 	void ProcessMessages();
 	void ProcessMessage(yojimbo::Message* message);
-	void ProcessGameTestMessage(GameTestMessage* message);
-	void ProcessTransformMessage(TransformMessage* message);
+	virtual void ProcessGameTestMessage(GameTestMessage* message);
+	virtual void ProcessTransformMessage(TransformMessage* message);
+	virtual void ProcessRigidbodyMessage(RigidbodyMessage* message);
+	virtual void ProcessPlayerUpdateMessage(PlayerUpdateMessage* message);
 
 	GameConnectionConfig m_connectionConfig;
 	ClientGameAdapter m_adapter;

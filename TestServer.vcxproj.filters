@@ -80,5 +80,20 @@
     <ClInclude Include="Game\MainGameScene.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="Game\GameInteractionInterface.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\SweepForceInput.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="networking\RigidbodyMessage.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

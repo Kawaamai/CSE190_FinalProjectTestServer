@@ -16,14 +16,16 @@ int main() {
 
 	GameServer server(yojimbo::Address("127.0.0.1", ServerPort));
 
-	std::cout << "starting server thread" << std::endl;
-	std::thread networkThread(&GameServer::Run, &server);
+	server.Run();
 
-	std::cout << "starting game physics thread" << std::endl;
-	std::thread physicsThread(&GameServer::PhysicsRun, &server);
+	//std::cout << "starting server thread" << std::endl;
+	//std::thread networkThread(&GameServer::Run, &server);
 
-	networkThread.join();
-	physicsThread.join();
+	//std::cout << "starting game physics thread" << std::endl;
+	//std::thread physicsThread(&GameServer::PhysicsRun, &server);
+
+	//networkThread.join();
+	//physicsThread.join();
 
 	ShutdownYojimbo();
 
