@@ -161,10 +161,10 @@ protected:
 			PxVec3 sweepPos = converter::glmVec3ToPhysXVec3(player.position * glm::vec4(controllers->getHandPosition(ovrHand_Right), 1.0f));
 			//std::cerr << "sweepDir: " << sweepDir.x << " " << sweepDir.y << " " << sweepDir.z << std::endl;
 			//std::cerr << "sweepPos: " << sweepPos.x << " " << sweepPos.y << " " << sweepPos.z << std::endl;
-			PxScene* scene;
-			PxGetPhysics().getScenes(&scene, 1);
+			//PxScene* scene;
+			//PxGetPhysics().getScenes(&scene, 1);
 
-			AddSweepPushForce(scene, sweepDir, sweepPos);
+			//AddSweepPushForce(scene, sweepDir, sweepPos);
 
 			if (m_client.IsConnected()) {
 				std::cerr << "send sweep force" << std::endl;
@@ -219,9 +219,7 @@ protected:
 		}
 		PxTransform tm;
 		converter::NetTmToPhysXTm(message->m_data.transform, tm);
-		if (actorId == 1) {
-			std::cerr << "from message " << tm.p.x << std::endl;
-		}
+		// Do not do anything with this for now
 		//m_actors.at(actorId)->setGlobalPose(tm);
 	}
 	void ProcessRigidbodyMessage(RigidbodyMessage * message) override {
@@ -237,9 +235,6 @@ protected:
 		converter::NetTmToPhysXTm(message->m_data.transform, tm);
 		converter::NetVec3ToPhysXVec3(message->m_data.linVel, linVel);
 		converter::NetVec3ToPhysXVec3(message->m_data.angVel, angVel);
-		if (actorId == 1) {
-			std::cerr << "from message " << tm.p.x << std::endl;
-		}
 		m_actors.at(actorId)->setGlobalPose(tm);
 		//PxRigidBody* rb = reinterpret_cast<PxRigidActor*>(m_actors.at(actorId));
 		PxRigidBody* rb = reinterpret_cast<PxRigidBody*>(m_actors.at(actorId));

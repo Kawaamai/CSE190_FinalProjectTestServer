@@ -51,7 +51,7 @@ void GameServer::PhysicsRun() {
 	m_scene.Cleanup();
 }
 
-static unsigned int i = 0;
+//static unsigned int i = 0;
 
 void GameServer::Update(float dt) {
 	// stop if server is not running
@@ -64,15 +64,6 @@ void GameServer::Update(float dt) {
 	m_server.AdvanceTime(m_time);
 	m_server.ReceivePackets();
 	ProcessMessages();
-	
-	i = (i + 1) % 60;
-	if (i == 20) {
-		SweepForceInputMessageData data;
-		data.sweepDir = NetVec3(0, 0, -1);
-		data.sweepPos = NetVec3();
-		std::cerr << "PROCESS SWEEP FORCE INPUT MANUALLY ------------------------------------------" << std::endl;
-		m_scene.ProcessSweepForceInputMessage(data);
-	}
 
 	m_scene.Update(); // run physics sim
 

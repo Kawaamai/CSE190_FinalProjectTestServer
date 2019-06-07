@@ -146,8 +146,6 @@ protected:
 			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC, reinterpret_cast<PxActor**>(&m_actors[0]), nbActors);
 			//std::cerr << m_actors.size() << std::endl;
 		}
-		if (1 < nbActors)
-			std::cerr << "snapshot " << m_actors[1]->getGlobalPose().p.x << std::endl;
 	}
 
 public:
