@@ -1,7 +1,7 @@
 #pragma once
 
 static const uint8_t DEFAULT_PRIVATE_KEY[yojimbo::KeyBytes] = { 0 };
-static const int MAX_PLAYERS = 8;
+static const int MAX_PLAYERS = 2;
 
 const int ClientPort = 30000;
 const int ServerPort = 40000;

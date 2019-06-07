@@ -81,9 +81,6 @@
     <ClInclude Include="..\Minimal\OvrHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Minimal\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Minimal\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -158,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="..\networking\SweepForceInput.h">
       <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\Player.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\PlayerClient.h">
+      <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

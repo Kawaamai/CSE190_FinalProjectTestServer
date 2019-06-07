@@ -54,7 +54,7 @@ private:
 	uvec2 _renderTargetSize;
 	uvec2 _mirrorSize;
 
-	std::unique_ptr<AvatarHandler> av;
+	//std::unique_ptr<AvatarHandler> av;
 
 public:
 
@@ -150,7 +150,7 @@ protected:
 		glGenFramebuffers(1, &_mirrorFbo);
 
 		// FIXME: find a better place for this
-		av = std::make_unique<AvatarHandler>(_session);
+		//av = std::make_unique<AvatarHandler>(_session);
 	}
 
 	void postInit() override {
@@ -186,15 +186,15 @@ protected:
 			_sceneLayer.RenderPose[eye] = eyePoses[eye];
 
 			// hand avatar rendering
-			{
-				ovrVector3f eyePosition = eyePoses[eye].Position;
-				glm::vec3 eyeWorld = ovr::toGlm(eyePosition);
-				glm::mat4 view = glm::inverse(ovr::toGlm(eyePoses[eye]));
-				av->updateAvatar(_eyeProjections[eye], view, eyeWorld);
-			}
+			//{
+			//	ovrVector3f eyePosition = eyePoses[eye].Position;
+			//	glm::vec3 eyeWorld = ovr::toGlm(eyePosition);
+			//	glm::mat4 view = glm::inverse(ovr::toGlm(eyePoses[eye]));
+			//	av->updateAvatar(_eyeProjections[eye], view, eyeWorld);
+			//}
 
-			//renderScene(_eyeProjections[eye], ovr::toGlm(eyePoses[eye]), eye, eyePoses[eye]);
-			renderScene(_eyeProjections[eye], ovr::toGlm(eyePoses[eye]));
+			renderScene(_eyeProjections[eye], ovr::toGlm(eyePoses[eye]), eye, eyePoses[eye]);
+			//renderScene(_eyeProjections[eye], ovr::toGlm(eyePoses[eye]));
 		});
 
 		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
@@ -230,9 +230,9 @@ protected:
 	}
 
 	virtual void handleInput() = 0;
-	virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose) = 0;
+	//virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose) = 0;
 	//virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, ovrEyeType eye) = 0;
-	//virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, ovrEyeType eye, ovrPosef eyePose) = 0;
+	virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, ovrEyeType eye, ovrPosef eyePose) = 0;
 	//virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, const ovrPosef camera) = 0;
 	//virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, const glm::vec3 & headPos) = 0;
 };

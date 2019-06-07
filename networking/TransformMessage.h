@@ -50,3 +50,6 @@ public:
 
 	YOJIMBO_VIRTUAL_SERIALIZE_FUNCTIONS();
 };
+
+//#define PlayerUpdateMessage TransformMessage;
+typedef TransformMessage PlayerUpdateMessage;

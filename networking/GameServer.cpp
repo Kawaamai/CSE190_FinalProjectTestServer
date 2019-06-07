@@ -72,6 +72,7 @@ void GameServer::Update(float dt) {
 	// ... send game state to clietns ...
 	//m_scene.UpdateSnapshot(); // done in physic's update
 	SendSceneSnapshot();
+	SendPlayerPositions();
 
 	m_server.SendPackets();
 }
@@ -103,7 +104,25 @@ void GameServer::SendSceneSnapshot() {
 	});
 }
 
-void GameServer::SendActorMessage() {
+void GameServer::SendPlayerPositions() {
+	ForEachConnectedClient([&](int clientIdx) {
+		const std::array<Player, MAX_PLAYERS>& players = m_scene.getPlayers();
+
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			PlayerUpdateMessage* message = (PlayerUpdateMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::PLAYER_UPDATE);
+			//message->m_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
+			message->m_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
+			message->m_data.transform.position.z = message->m_data.transform.position.z * -1; // for testing
+			message->m_data.transform.orientation = converter::glmQuatToNetQuat(players.at(i).orientation);
+			message->m_data.int_uniqueGameObjectId = clientIdx;
+			//if (i != clientIdx) {
+			//	m_server.SendMessage(clientIdx, (int)GameChannel::UNRELIABLE, message);
+			//}
+			if (i == clientIdx) { // for testing
+				m_server.SendMessage(clientIdx, (int)GameChannel::UNRELIABLE, message);
+			}
+		}
+	});
 }
 
 void GameServer::Stop() {
@@ -143,6 +162,8 @@ void GameServer::ProcessMessage(int clientIndex, yojimbo::Message * message) {
 		break;
 	case (int)GameMessageType::SWEEP_FORCE_INPUT:
 		ProcessSweepForceInputMessage(clientIndex, (SweepForceInputMessage*)message);
+	case (int)GameMessageType::PLAYER_UPDATE:
+		ProcessPlayerUpdateMessage(clientIndex, (PlayerUpdateMessage*)message);
 	default:
 		break;
 	}
@@ -159,7 +180,10 @@ void GameServer::ProcessTransformMessage(int clientIndex, TransformMessage * mes
 	std::cout << "transform message received from client " << clientIndex << " with data " << message->m_data << std::endl;
 	TransformMessage* testMessage = (TransformMessage*)m_server.CreateMessage(clientIndex, (int)GameMessageType::TRANSFORM_INFO);
 	m_server.SendMessage(clientIndex, (int)GameChannel::UNRELIABLE, testMessage);
+}
 
+void GameServer::ProcessPlayerUpdateMessage(int clientIndex, PlayerUpdateMessage * message) {
+	m_scene.UpdatePlayer(clientIndex, message->m_data);
 }
 
 void GameServer::ProcessSweepForceInputMessage(int clientIndex, SweepForceInputMessage * message) {

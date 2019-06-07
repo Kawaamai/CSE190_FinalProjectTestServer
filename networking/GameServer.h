@@ -25,13 +25,14 @@ private:
 
 	// sending messages
 	void SendSceneSnapshot();
-	void SendActorMessage();
+	void SendPlayerPositions();
 
 	// process messages
 	void ProcessMessages();
 	void ProcessMessage(int clientIndex, yojimbo::Message* message);
 	void ProcessGameTestMessage(int clientIndex, GameTestMessage* message);
 	virtual void ProcessTransformMessage(int clientIndex, TransformMessage* message);
+	virtual void ProcessPlayerUpdateMessage(int clientIndex, PlayerUpdateMessage* message);
 	virtual void ProcessSweepForceInputMessage(int clientIndex, SweepForceInputMessage* message);
 
 	void ForEachConnectedClient(std::function<void(int)> f);

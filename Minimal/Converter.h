@@ -136,4 +136,20 @@ namespace converter {
 		newQuat.y = quat.y;
 		newQuat.z = quat.z;
 	}
+
+	static glm::vec3 NetVec3ToglmVec3(const NetVec3& vec) {
+		return glm::vec3(vec.x, vec.y, vec.z);
+	}
+
+	static glm::quat NetQuatToglmQuat(const NetQuat& quat) {
+		return glm::quat(quat.w, quat.x, quat.y, quat.z);
+	}
+
+	static NetVec3 glmVec3ToNetVec3(const glm::vec3& vec) {
+		return NetVec3(vec.x, vec.y, vec.z);
+	}
+
+	static NetQuat glmQuatToNetQuat(const glm::quat& quat) {
+		return NetQuat(quat.w, quat.x, quat.y, quat.z);
+	}
 }

@@ -4,6 +4,9 @@
 #include "GameInteractionInterface.h"
 #include "networking/SweepForceInput.h"
 #include "Minimal/Converter.h"
+#include "GameConstants.h"
+#include "Player.h"
+#include <array>
 
 class MainGameScene : public PhysXServerApp {
 public:
@@ -46,8 +49,18 @@ public:
 		AddSweepPushForce(scene, sweepDir, sweepPos);
 	}
 
+	void UpdatePlayer(int clientIdx, TransformMessageData data) {
+		players.at(clientIdx).position = converter::NetVec3ToglmVec3(data.transform.position);
+		players.at(clientIdx).orientation = converter::NetQuatToglmQuat(data.transform.orientation);
+	}
+
+	const std::array<Player, MAX_PLAYERS>& getPlayers() {
+		return players;
+	}
+
 protected:
 	bool m_running = true;
 	//std::unique_ptr<std::vector<PxRigidActor*>> m_actorsPtr;
 	// snapshot of dynamic actors
+	std::array<Player, MAX_PLAYERS> players;
 };

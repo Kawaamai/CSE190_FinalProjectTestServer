@@ -13,11 +13,16 @@ public:
 	void Disconnect();
 
 protected:
+	// message sending
+	virtual void SendEveryUpdate() {}
+
+	// message processing
 	void ProcessMessages();
 	void ProcessMessage(yojimbo::Message* message);
 	virtual void ProcessGameTestMessage(GameTestMessage* message);
 	virtual void ProcessTransformMessage(TransformMessage* message);
 	virtual void ProcessRigidbodyMessage(RigidbodyMessage* message);
+	virtual void ProcessPlayerUpdateMessage(PlayerUpdateMessage* message);
 
 	GameConnectionConfig m_connectionConfig;
 	ClientGameAdapter m_adapter;

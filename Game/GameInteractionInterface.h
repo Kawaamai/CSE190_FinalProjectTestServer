@@ -6,7 +6,7 @@
 namespace defgame {
 	const PxReal SWEEP_RADIUS = .2f;
 	const PxReal SWEEP_DIST = 2.0f;
-	const PxReal SWEEP_FORCE = 100.0f;
+	const PxReal SWEEP_FORCE = 20.0f;
 }
 
 static void AddSweepPushForce(

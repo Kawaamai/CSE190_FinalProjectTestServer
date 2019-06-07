@@ -137,6 +137,7 @@
     <ClInclude Include="..\Game\GameInteractionInterface.h" />
     <ClInclude Include="..\Game\MainGameScene.h" />
     <ClInclude Include="..\Game\PhysXServerApp.h" />
+    <ClInclude Include="..\Game\Player.h" />
     <ClInclude Include="..\Minimal\AvatarHandler.h" />
     <ClInclude Include="..\Minimal\BasicShader.h" />
     <ClInclude Include="..\Minimal\ControllerHandler.h" />
@@ -152,7 +153,7 @@
     <ClInclude Include="..\Minimal\OvrHelper.h" />
     <ClInclude Include="..\Minimal\PhysXApp.h" />
     <ClInclude Include="..\Minimal\Plane.h" />
-    <ClInclude Include="..\Minimal\Player.h" />
+    <ClInclude Include="..\Minimal\PlayerClient.h" />
     <ClInclude Include="..\Minimal\resource.h" />
     <ClInclude Include="..\Minimal\RiftApp.h" />
     <ClInclude Include="..\Minimal\RingBuffer.h" />

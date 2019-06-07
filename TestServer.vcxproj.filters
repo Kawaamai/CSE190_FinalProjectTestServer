@@ -89,6 +89,9 @@
     <ClInclude Include="networking\RigidbodyMessage.h">
       <Filter>Networking</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Player.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

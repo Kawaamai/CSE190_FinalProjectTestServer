@@ -141,6 +141,7 @@
     <ClInclude Include="Game\GameInteractionInterface.h" />
     <ClInclude Include="Game\MainGameScene.h" />
     <ClInclude Include="Game\PhysXServerApp.h" />
+    <ClInclude Include="Game\Player.h" />
     <ClInclude Include="networking\GameAdapter.h" />
     <ClInclude Include="networking\GameChannel.h" />
     <ClInclude Include="networking\GameClient.h" />
