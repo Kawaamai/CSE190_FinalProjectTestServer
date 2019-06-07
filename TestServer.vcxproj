@@ -151,6 +151,7 @@
     <ClInclude Include="networking\GameServer.h" />
     <ClInclude Include="networking\GameTestMessage.h" />
     <ClInclude Include="networking\NetTypes.h" />
+    <ClInclude Include="networking\RigidbodyMessage.h" />
     <ClInclude Include="networking\SweepForceInput.h" />
     <ClInclude Include="networking\TransformMessage.h" />
   </ItemGroup>

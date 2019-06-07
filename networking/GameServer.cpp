@@ -37,6 +37,7 @@ void GameServer::Run() {
 		}
 	}
 
+	m_scene.Cleanup();
 	m_server.Stop();
 }
 
@@ -50,6 +51,8 @@ void GameServer::PhysicsRun() {
 	m_scene.Cleanup();
 }
 
+static unsigned int i = 0;
+
 void GameServer::Update(float dt) {
 	// stop if server is not running
 	if (!m_server.IsRunning()) {
@@ -61,6 +64,17 @@ void GameServer::Update(float dt) {
 	m_server.AdvanceTime(m_time);
 	m_server.ReceivePackets();
 	ProcessMessages();
+	
+	i = (i + 1) % 60;
+	if (i == 20) {
+		SweepForceInputMessageData data;
+		data.sweepDir = NetVec3(0, 0, -1);
+		data.sweepPos = NetVec3();
+		std::cerr << "PROCESS SWEEP FORCE INPUT MANUALLY ------------------------------------------" << std::endl;
+		m_scene.ProcessSweepForceInputMessage(data);
+	}
+
+	m_scene.Update(); // run physics sim
 
 	// ... process client inputs ...
 	// ... update game ...
@@ -73,13 +87,24 @@ void GameServer::Update(float dt) {
 
 void GameServer::SendSceneSnapshot() {
 	m_scene.ForEachActor([&](int actorId, PxRigidActor const * const actor) {
+		PxRigidBody const * const rb = reinterpret_cast<PxRigidBody const * const>(actor);
 		PxTransform tm = actor->getGlobalPose();
+		PxVec3 linVel = rb->getLinearVelocity();
+		PxVec3 angVel = rb->getAngularVelocity();
+
 		//NetTransform data(NetVec3(tm.p.x, tm.p.y, tm.p.z), NetQuat(tm.q.w, tm.q.x, tm.q.y, tm.q.z));
 		NetTransform data;
 		converter::PhysXTmToNetTm(tm, data);
+		NetVec3 linVelData, angVelData;
+		converter::PhysXVec3ToNetVec3(linVel, linVelData);
+		converter::PhysXVec3ToNetVec3(angVel, angVelData);
+		//if (actorId == 1)
+		//	std::cerr << "sentSnapshot " << actor->getGlobalPose().p.x << std::endl;
+
 		// message setup	
 		ForEachConnectedClient([&](int clientIdx) {
-			TransformMessage* message = (TransformMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::TRANSFORM_INFO);
+			//TransformMessage* message = (TransformMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::TRANSFORM_INFO);
+			RigidbodyMessage* message = (RigidbodyMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::RIGIDBODY_INFO);
 			message->m_data.transform = data;
 			message->m_data.int_uniqueGameObjectId = actorId;
 			m_server.SendMessage(clientIdx, (int)GameChannel::UNRELIABLE, message);

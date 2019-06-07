@@ -209,7 +209,7 @@ protected:
 
 protected:
 
-	void ProcessTransformMessage(TransformMessage * message) {
+	void ProcessTransformMessage(TransformMessage * message) override {
 		// TODO: timestamp
 		unsigned int actorId = message->m_data.int_uniqueGameObjectId;
 		//std::cerr << actorId << std::endl;
@@ -223,6 +223,28 @@ protected:
 			std::cerr << "from message " << tm.p.x << std::endl;
 		}
 		//m_actors.at(actorId)->setGlobalPose(tm);
+	}
+	void ProcessRigidbodyMessage(RigidbodyMessage * message) override {
+		// TODO: timestamp
+		unsigned int actorId = message->m_data.int_uniqueGameObjectId;
+		//std::cerr << actorId << std::endl;
+		if (actorId >= m_numActors || actorId >= m_actors.size()) {
+			std::cerr << "ERROR: transform gameobjec id " << actorId << " is not in scene (" << m_numActors << ")" << std::endl;
+			return;
+		}
+		PxTransform tm;
+		PxVec3 linVel, angVel;
+		converter::NetTmToPhysXTm(message->m_data.transform, tm);
+		converter::NetVec3ToPhysXVec3(message->m_data.linVel, linVel);
+		converter::NetVec3ToPhysXVec3(message->m_data.angVel, angVel);
+		if (actorId == 1) {
+			std::cerr << "from message " << tm.p.x << std::endl;
+		}
+		m_actors.at(actorId)->setGlobalPose(tm);
+		//PxRigidBody* rb = reinterpret_cast<PxRigidActor*>(m_actors.at(actorId));
+		PxRigidBody* rb = reinterpret_cast<PxRigidBody*>(m_actors.at(actorId));
+		rb->setLinearVelocity(linVel);
+		rb->setAngularVelocity(angVel);
 	}
 };
 

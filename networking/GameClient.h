@@ -17,6 +17,7 @@ protected:
 	void ProcessMessage(yojimbo::Message* message);
 	virtual void ProcessGameTestMessage(GameTestMessage* message);
 	virtual void ProcessTransformMessage(TransformMessage* message);
+	virtual void ProcessRigidbodyMessage(RigidbodyMessage* message);
 
 	GameConnectionConfig m_connectionConfig;
 	ClientGameAdapter m_adapter;

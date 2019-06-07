@@ -121,6 +121,8 @@ void GameClient::ProcessMessage(yojimbo::Message * message) {
 	case (int)GameMessageType::TRANSFORM_INFO:
 		ProcessTransformMessage((TransformMessage*)message);
 		break;
+	case (int)GameMessageType::RIGIDBODY_INFO:
+		ProcessRigidbodyMessage((RigidbodyMessage*)message);
     default:
         break;
     }
@@ -133,4 +135,6 @@ void GameClient::ProcessGameTestMessage(GameTestMessage * message) {
 void GameClient::ProcessTransformMessage(TransformMessage * message) {
 	//std::cout << "Transform message received from server with data:\n" << message->m_data << std::endl;
 }
+
+void GameClient::ProcessRigidbodyMessage(RigidbodyMessage * message) {}
 
