@@ -139,6 +139,7 @@
     <ClInclude Include="..\Game\PhysXServerApp.h" />
     <ClInclude Include="..\Game\Player.h" />
     <ClInclude Include="..\Minimal\AvatarHandler.h" />
+    <ClInclude Include="..\Minimal\BasicColorGeometryScene.h" />
     <ClInclude Include="..\Minimal\BasicShader.h" />
     <ClInclude Include="..\Minimal\ControllerHandler.h" />
     <ClInclude Include="..\Minimal\Converter.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="..\Minimal\Cube.h" />
     <ClInclude Include="..\Minimal\ExampleApp.hpp" />
     <ClInclude Include="..\Minimal\GlfwApp.h" />
+    <ClInclude Include="..\Minimal\GridScene.h" />
     <ClInclude Include="..\Minimal\Lighting.h" />
     <ClInclude Include="..\Minimal\Mesh.h" />
     <ClInclude Include="..\Minimal\Model.h" />
@@ -210,6 +212,8 @@
     <None Include="..\Minimal\lightedColor.vert" />
     <None Include="..\Minimal\oglBasicColor.frag" />
     <None Include="..\Minimal\oglBasicColor.vert" />
+    <None Include="..\Minimal\oglBlinnPhongColor.frag" />
+    <None Include="..\Minimal\oglBlinnPhongColor.vert" />
     <None Include="..\Minimal\shader.frag" />
     <None Include="..\Minimal\shader.vert" />
     <None Include="..\Minimal\skybox.frag" />
@@ -227,9 +231,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Minimal\BasicColorGeometryScene.cpp" />
     <ClCompile Include="..\Minimal\BasicShader.cpp" />
     <ClCompile Include="..\Minimal\ControllerHandler.cpp" />
     <ClCompile Include="..\Minimal\Cube.cpp" />
+    <ClCompile Include="..\Minimal\GridScene.cpp" />
     <ClCompile Include="..\Minimal\main.cpp" />
     <ClCompile Include="..\Minimal\Model.cpp" />
     <ClCompile Include="..\Minimal\Plane.cpp" />

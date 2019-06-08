@@ -42,11 +42,15 @@ public:
 		PxVec3 sweepDir, sweepPos;
 		converter::NetVec3ToPhysXVec3(data.sweepDir, sweepDir);
 		converter::NetVec3ToPhysXVec3(data.sweepPos, sweepPos);
+		PxReal dist = data.sweepDistance;
+		if (dist == 0.0f)
+			dist = defgame::SWEEP_DIST;
+		std::cerr << dist << std::endl;
 		//std::cerr << "dir: " << sweepDir.x << ", " << sweepDir.y << ", " << sweepDir.z << std::endl;
 		//std::cerr << "pos: " << sweepPos.x << ", " << sweepPos.y << ", " << sweepPos.z << std::endl;
 		PxScene* scene;
 		PxGetPhysics().getScenes(&scene, 1);
-		AddSweepPushForce(scene, sweepDir, sweepPos);
+		AddSweepPushForce(scene, sweepDir, sweepPos, defgame::SWEEP_RADIUS, dist);
 	}
 
 	void UpdatePlayer(int clientIdx, TransformMessageData data) {

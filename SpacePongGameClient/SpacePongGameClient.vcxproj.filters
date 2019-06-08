@@ -162,6 +162,12 @@
     <ClInclude Include="..\Minimal\PlayerClient.h">
       <Filter>Application</Filter>
     </ClInclude>
+    <ClInclude Include="..\Minimal\BasicColorGeometryScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\GridScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Minimal\Minimal.rc">
@@ -289,6 +295,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="..\Minimal\oglBlinnPhongColor.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\oglBlinnPhongColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Minimal\SphereScene.cpp">
@@ -329,6 +341,12 @@
     </ClCompile>
     <ClCompile Include="..\networking\ClientGameAdapter.cpp">
       <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\BasicColorGeometryScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Minimal\GridScene.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ public:
 	}
 
 	void renderControllers(const glm::mat4& proj, const glm::mat4& view, ovrEyeType eye, ovrPosef eyePose) {
-		controllers->renderHands(proj, view);
+		controllers->renderHands(proj, view, eyePose);
 	}
 
 	void renderHands(const glm::mat4& proj, const glm::mat4& view, ovrEyeType eye, ovrPosef eyePose) {

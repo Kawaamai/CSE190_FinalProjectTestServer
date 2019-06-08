@@ -41,7 +41,7 @@ static void AddSweepPushForce(
 				const PxGeometry geom = shapes[j]->getGeometry().any();
 				switch (geom.getType()) {
 				case PxGeometryType::eBOX: {
-					PxU32 hitcount = PxGeometryQuery::sweep(sweepDir, 2.0f, sweepSphere, sweepTransform, geom, tm, hitInfo, hitFlags);
+					PxU32 hitcount = PxGeometryQuery::sweep(sweepDir, sweepDist, sweepSphere, sweepTransform, geom, tm, hitInfo, hitFlags);
 					//std::cerr << hitcount << std::endl;
 					if (hitcount)
 						reinterpret_cast<PxRigidBody*>(actors[i])->addForce(sweepDir * sweepForce);

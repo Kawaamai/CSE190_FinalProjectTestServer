@@ -1,85 +1,11 @@
 #include "ControllerHandler.h"
 #include "oglShaderAttributes.h"
 
-ControllerHandler::ControllerHandler(const ovrSession & s) :
-	_session(s),
-	instanceCount(0),
-	sphere({ "Position", "Normal" }, oglplus::shapes::Sphere(0.01, 18, 12)),
-	lighting(false)
-{
-	using namespace oglplus;
-	try {
-		// attach the shaders to the program
-		prog.AttachShader(
-			FragmentShader()
-			.Source(GLSLSource(String(::Shader::openShaderFile(fragShader))))
-			.Compile()
-		);
-		prog.AttachShader(
-			VertexShader()
-			.Source(GLSLSource(String(::Shader::openShaderFile(vertexShader))))
-			.Compile()
-		);
-		prog.Link();
-	}
-	catch (ProgramBuildError & err) {
-		throw std::runtime_error((const char*)err.what());
-	}
-
-	// link and use it
-	prog.Use();
-
-	vao = sphere.VAOForProgram(prog);
-	vao.Bind();
-
-	// color
-	Context::Bound(Buffer::Target::Array, colors).Data(instance_colors);
-	GLuint stride = sizeof(glm::vec4);
-	VertexArrayAttrib instance_attr(prog, Attribute::Color);
-	instance_attr.Pointer(4, DataType::Float, false, stride, (void*)0);
-	instance_attr.Divisor(1);
-	instance_attr.Enable();
-}
-
 ControllerHandler::ControllerHandler(const ovrSession & s, Lighting light) :
 	_session(s),
-	instanceCount(0),
-	sphere({ "Position", "Normal" }, oglplus::shapes::Sphere(0.01, 18, 12)),
-	sceneLight(light),
-	lighting(true)
+	sceneLight(light)
 {
-	using namespace oglplus;
-	try {
-		// attach the shaders to the program
-		prog.AttachShader(
-			FragmentShader()
-			.Source(GLSLSource(String(::Shader::openShaderFile(lightFragShader))))
-			.Compile()
-		);
-		prog.AttachShader(
-			VertexShader()
-			.Source(GLSLSource(String(::Shader::openShaderFile(lightVertexShader))))
-			.Compile()
-		);
-		prog.Link();
-	}
-	catch (ProgramBuildError & err) {
-		throw std::runtime_error((const char*)err.what());
-	}
-
-	// link and use it
-	prog.Use();
-
-	vao = sphere.VAOForProgram(prog);
-	vao.Bind();
-
-	// color
-	Context::Bound(Buffer::Target::Array, colors).Data(instance_colors);
-	GLuint stride = sizeof(glm::vec4);
-	VertexArrayAttrib instance_attr(prog, Attribute::Color);
-	instance_attr.Pointer(4, DataType::Float, false, stride, (void*)0);
-	instance_attr.Divisor(1);
-	instance_attr.Enable();
+	basicShapeRenderer = std::make_unique<BasicColorGeometryScene>(light);
 }
 
 
@@ -87,55 +13,31 @@ ControllerHandler::~ControllerHandler()
 {
 }
 
-void ControllerHandler::renderHands(const glm::mat4 & projection, const glm::mat4 & modelview)
+void ControllerHandler::renderHands(const glm::mat4 & projection, const glm::mat4 & modelview, const ovrPosef& eyePose)
 {
-	std::vector<glm::mat4> instance_positions;
-	// update
-
 	// render hands
 	if (handStatus[ovrHand_Left]) {
 		//renderHand(projection, modelview, handPoses[0].Position);
 		glm::vec3 handPosition = ovr::toGlm(handPoses[ovrHand_Left].Position);
 		glm::mat4 transform = glm::translate(glm::mat4(1.0), handPosition);
-		instance_positions.push_back(transform);
+		glm::mat4 rotTm = glm::mat4_cast(ovr::toGlm(handPoses[ovrHand_Left].Orientation));
+		glm::mat4 scaleTm = glm::scale(glm::vec3(scale));
+		basicShapeRenderer->renderCube(projection, modelview, transform * rotTm * scaleTm, eyePose, glm::vec3(1.0, 0.0, 1.0));
 	}
 	if (handStatus[ovrHand_Right]) {
 		glm::vec3 handPosition = ovr::toGlm(handPoses[ovrHand_Right].Position);
 		glm::mat4 transform = glm::translate(glm::mat4(1.0), handPosition);
-		instance_positions.push_back(transform);
+		glm::mat4 rotTm = glm::mat4_cast(ovr::toGlm(handPoses[ovrHand_Right].Orientation));
+		glm::mat4 scaleTm = glm::scale(glm::vec3(scale));
+		basicShapeRenderer->renderCube(projection, modelview, transform * rotTm * scaleTm, eyePose, glm::vec3(1.0, 0.0, 1.0));
 	}
 
-	// render the hands
-	// link and use it
-	prog.Use();
-	vao.Bind();
-	oglplus::Uniform<glm::mat4>(prog, "ProjectionMatrix").Set(projection);
-	oglplus::Uniform<glm::mat4>(prog, "CameraMatrix").Set(modelview);
-	if (lighting) {
-		oglplus::Uniform<glm::vec3>(prog, "lightPos").Set(sceneLight.lightPos);
-		oglplus::Uniform<glm::vec3>(prog, "lightColor").Set(sceneLight.lightColor);
-	}
-
-	// hand positions
-	oglplus::Context::Bound(oglplus::Buffer::Target::Array, instances).Data(instance_positions);
-	instanceCount = (GLuint)instance_positions.size();
-	int stride = sizeof(glm::mat4);
-	for (int i = 0; i < 4; ++i) {
-		oglplus::VertexArrayAttrib instance_attr(prog, Attribute::InstanceTransform + i);
-		size_t offset = sizeof(glm::vec4) * i;
-		instance_attr.Pointer(4, oglplus::DataType::Float, false, stride, (void*)offset);
-		instance_attr.Divisor(1);
-		instance_attr.Enable();
-	}
-
-	sphere.Draw(instanceCount);
 }
 
 void ControllerHandler::updateHandState()
 {
 	updateHands();
 	buttonHandler();
-	smoothingIdx = incRingIdx(smoothingBuffer, smoothingIdx);
 }
 
 // Important: make sure this is only called one time each frame
@@ -200,29 +102,3 @@ void ControllerHandler::buttonHandler()
 	}
 }
 
-glm::vec3 ControllerHandler::calcSmoothPos(unsigned int hand) {
-	if (smoothing == 0)
-		return getRingAt(smoothingBuffer, smoothingIdx - lag)[hand];
-
-	glm::vec3 total;
-	for (int i = 0; i < smoothing; i++) {
-		total += getRingAt(smoothingBuffer, smoothingIdx - i - lag)[hand];
-	}
-
-	return total / (float) smoothing;
-}
-
-//void ControllerHandler::renderHand(
-//	const glm::mat4 & projection,
-//	const glm::mat4 & modelview,
-//	const ovrVector3f & handPosition)
-//{
-//	glm::mat4 transform = glm::translate(glm::mat4(1.0), glm::vec3(handPosition.x, handPosition.y, handPosition.z));
-//
-//	//shader.use();
-//	//shader.setMat4("ProjectionMatrix", projection);
-//	//shader.setMat4("CameraMatrix", modelview);
-//	//shader.setMat4("InstanceTransform", transform);
-//	//shader.setMat4("ModelMatrix", glm::scale(glm::mat4(1.0), scale));
-//	//handPointer.Draw(shader);
-//}

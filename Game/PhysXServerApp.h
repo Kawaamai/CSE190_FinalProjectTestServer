@@ -96,7 +96,8 @@ protected:
 		printf("init physics scene \n");
 
 		PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
-		sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
+		//sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
+		sceneDesc.gravity = PxVec3(0.0f, 0.0f, 0.0f); // No Gravity!!
 		gDispatcher = PxDefaultCpuDispatcherCreate(2);
 		sceneDesc.cpuDispatcher = gDispatcher;
 		sceneDesc.filterShader = PxDefaultSimulationFilterShader;
@@ -110,9 +111,36 @@ protected:
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 		}
 		gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+		//gMaterial = gPhysics->createMaterial(0.1f, 0.1f, 0.1f);
 
-		PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
-		gScene->addActor(*groundPlane);
+		//PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
+		//gScene->addActor(*groundPlane);
+
+		// TODO: determine if we need to use a different material for the walls
+		// create side walls
+		PxReal sideWallx = 0.05f, sideWally = 3.0f, sideWallz = 12.0f;
+		PxShape* sideWallShape = gPhysics->createShape(PxBoxGeometry(sideWallx / 2.0f, sideWally / 2.0f, sideWallz / 2.0f), *gMaterial);
+		for (PxU32 i = 0; i < 8; i++) {
+			PxTransform offsetTm(PxVec3(3.0f, 0.0f, 0.0f));
+			PxReal angle = PxPiDivFour;
+			PxQuat localRot(angle * i, PxVec3(0.0f, 0.0f, 1.0f));
+			PxTransform rotTm(localRot);
+			PxRigidStatic* sideWallBody = gPhysics->createRigidStatic(rotTm.transform(offsetTm));
+			sideWallBody->attachShape(*sideWallShape);
+			gScene->addActor(*sideWallBody);
+		}
+
+		// create end walls
+		PxShape * endWallShape = gPhysics->createShape(PxBoxGeometry(3.0f, 3.0f, 0.025f), *gMaterial);
+		for (int i = 0; i < 2; i++) {
+			int flip = 1;
+			if (i == 1)
+				flip = -1;
+			PxTransform endWallTm(PxVec3(0.0f, 0.0f, sideWallz / 2.0f * flip));
+			PxRigidStatic* endWallBody = gPhysics->createRigidStatic(endWallTm);
+			endWallBody->attachShape(*endWallShape);
+			gScene->addActor(*endWallBody);
+		}
 
 		//for(PxU32 i=0;i<5;i++)
 		//	createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 10, 2.0f);

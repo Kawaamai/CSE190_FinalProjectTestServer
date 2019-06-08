@@ -110,17 +110,17 @@ void GameServer::SendPlayerPositions() {
 
 		for (int i = 0; i < MAX_PLAYERS; i++) {
 			PlayerUpdateMessage* message = (PlayerUpdateMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::PLAYER_UPDATE);
-			//message->m_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
 			message->m_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
-			message->m_data.transform.position.z = message->m_data.transform.position.z * -1; // for testing
+			//message->m_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
+			//message->m_data.transform.position.z = message->m_data.transform.position.z * -1; // for testing
 			message->m_data.transform.orientation = converter::glmQuatToNetQuat(players.at(i).orientation);
 			message->m_data.int_uniqueGameObjectId = clientIdx;
-			//if (i != clientIdx) {
-			//	m_server.SendMessage(clientIdx, (int)GameChannel::UNRELIABLE, message);
-			//}
-			if (i == clientIdx) { // for testing
+			if (i != clientIdx) {
 				m_server.SendMessage(clientIdx, (int)GameChannel::UNRELIABLE, message);
 			}
+			//if (i == clientIdx) { // for testing
+			//	m_server.SendMessage(clientIdx, (int)GameChannel::UNRELIABLE, message);
+			//}
 		}
 	});
 }

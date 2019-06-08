@@ -5,28 +5,13 @@
 
 #include <GL/glew.h>
 
-#pragma warning( disable : 4068 4244 4267 4065)
-#include <oglplus/config/basic.hpp>
-#include <oglplus/config/gl.hpp>
-#include <oglplus/all.hpp>
-#include <oglplus/interop/glm.hpp>
-#include <oglplus/bound/texture.hpp>
-#include <oglplus/bound/framebuffer.hpp>
-#include <oglplus/bound/renderbuffer.hpp>
-#include <oglplus/bound/buffer.hpp>
-#include <oglplus/shapes/cube.hpp>
-#include <oglplus/shapes/sphere.hpp>
-#include <oglplus/shapes/wrapper.hpp>
-#pragma warning( default : 4068 4244 4267 4065)
-
 //#include "Model.h"
 #include "Shader.h" // has glm.hpp
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
 #include "OvrHelper.h"
-#include "Lighting.h"
-#include "RingBuffer.h"
+#include "BasicColorGeometryScene.h"
 
 class ControllerHandler
 {
@@ -47,28 +32,9 @@ public:
 	ovrPosef lastHandPoses[2];
 	ovrInputState prevInputState, currInputState;
 	
-	// hand model information
-	//std::string modelPath = "sphere2.obj";
-	const char *vertexShader = "oglBasicColor.vert";
-	const char *fragShader = "oglBasicColor.frag";
-	const char *lightVertexShader = "../Minimal/lightedColor.vert";
-	const char *lightFragShader = "../Minimal/lightedColor.frag";
-	oglplus::shapes::ShapeWrapper sphere;
-	const double baseDetectionRadius = 0.01;
-	oglplus::Program prog;
-	oglplus::VertexArray vao;
-	GLuint instanceCount;
-	oglplus::Buffer instances;
-	oglplus::Buffer colors;
-	// hand colors
-	std::vector<glm::vec4> instance_colors = {
-		glm::vec4(0.7f, 0, 0.7f, 1.0f),
-		glm::vec4(0.7f, 0, 0.7f, 1.0f)
-	};
 
-	//Model handPointer = Model(modelPath);
-	//Shader shader = Shader("basicVertex.vs", "basicFragment.fs");
-	const glm::vec3 scale = glm::vec3(0.05f);
+	std::unique_ptr<BasicColorGeometryScene> basicShapeRenderer;
+	const glm::vec3 scale = glm::vec3(0.01f);
 
 	const float handOffset = 0.1f;
 
@@ -77,16 +43,11 @@ public:
 	bool lighting = false;
 
 	// smoothing and lag
-	std::array<std::array<glm::vec3, 2>, 30> smoothingBuffer;
-	int smoothingIdx = 0;
-	int smoothing = 0;
-	int lag = 0;
 
-	ControllerHandler(const ovrSession & s);
 	ControllerHandler(const ovrSession & s, Lighting light);
 	~ControllerHandler();
 
-	void renderHands(const glm::mat4 & projection, const glm::mat4 & modelview);
+	void renderHands(const glm::mat4 & projection, const glm::mat4 & modelview, const ovrPosef & eyePose);
 	void updateHandState();
 
 	unsigned int gethandStatus(unsigned int hand) {
@@ -309,8 +270,6 @@ public:
 		else
 			return currInputState.Touches & ovrTouch_RThumbRest;
 	}
-
-	glm::vec3 calcSmoothPos(unsigned int hand);
 
 private:
 
