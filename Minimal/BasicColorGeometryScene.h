@@ -33,6 +33,7 @@ namespace BasicColors {
 
 class BasicColorGeometryScene {
 public:
+	Lighting sceneLight;
 
 	BasicColorGeometryScene(Lighting light);
 	~BasicColorGeometryScene() {};
@@ -40,18 +41,18 @@ public:
 	void renderSphere(const glm::mat4& projection,
 		const glm::mat4& view,
 		const glm::mat4& toWorld,
-		const ovrPosef& eyePose,
+		const glm::vec3 & eyePos,
 		glm::vec3 color = BasicColors::orangeColor);
 	void renderCube(const glm::mat4& projection,
 		const glm::mat4& view,
 		const glm::mat4& toWorld,
-		const ovrPosef& eyePose,
+		const glm::vec3 & eyePos,
 		glm::vec3 color = BasicColors::orangeColor);
 	void renderLine(const glm::mat4& projection,
 		const glm::mat4& view,
 		const glm::vec3& pt1,
 		const glm::vec3& pt2,
-		const ovrPosef& eyePose,
+		const glm::vec3 & eyePos,
 		glm::vec3 color = BasicColors::orangeColor);
 
 private:
@@ -72,7 +73,5 @@ private:
 	GLuint lineVao, lineVbo;
 	static const int numLinePoints = 2;
 	glm::vec3 lineVertices[numLinePoints] = { glm::vec3(1.0), glm::vec3(0.0) };
-
-	Lighting sceneLight;
 };
 

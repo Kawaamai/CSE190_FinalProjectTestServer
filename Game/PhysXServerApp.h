@@ -3,6 +3,7 @@
 #include "../snippets/snippetutils/SnippetUtils.h"
 #include <vector>
 #include <functional>
+#include <iostream>
 
 using namespace physx;
 
@@ -85,10 +86,21 @@ protected:
 				PxTransform forwardOffset(PxVec3(0.0f, 0.0f, 0.5));
 				PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm).transform(forwardOffset));
 				body->attachShape(*shape);
+				//PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
 				PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
 				gScene->addActor(*body);
 			}
 		}
+		shape->release();
+	}
+
+	void addBall(PxTransform tm = PxTransform(PxVec3(0.0))) {
+		PxShape* shape = gPhysics->createShape(PxSphereGeometry(.1f), *gMaterial);
+		PxTransform localTm(PxVec3(0.0));
+		PxRigidDynamic* body = gPhysics->createRigidDynamic(tm.transform(localTm));
+		body->attachShape(*shape);
+		PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+		gScene->addActor(*body);
 		shape->release();
 	}
 
@@ -111,17 +123,28 @@ protected:
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 		}
 		gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-		//gMaterial = gPhysics->createMaterial(0.1f, 0.1f, 0.1f);
+		//gMaterial = gPhysics->createMaterial(0.3f, 0.3f, 1.0f);
 
 		//PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
 		//gScene->addActor(*groundPlane);
 
 		// TODO: determine if we need to use a different material for the walls
 		// create side walls
-		PxReal sideWallx = 0.05f, sideWally = 3.0f, sideWallz = 12.0f;
+		PxReal sideWallx = 0.2f, sideWally = 3.0f, sideWallz = 12.0f;
+		PxReal sideWallRadius = 7.24264f / 2.0f;
 		PxShape* sideWallShape = gPhysics->createShape(PxBoxGeometry(sideWallx / 2.0f, sideWally / 2.0f, sideWallz / 2.0f), *gMaterial);
 		for (PxU32 i = 0; i < 8; i++) {
-			PxTransform offsetTm(PxVec3(3.0f, 0.0f, 0.0f));
+			//if (i == 0) {
+			//	PxRigidStatic* plane = PxCreatePlane(*gPhysics, PxPlane(-1, 0, 0, sideWallRadius - sideWallx / 2.0f), *gMaterial);
+			//	gScene->addActor(*plane);
+			//	continue;
+			//}
+			//if (i == 4) {
+			//	PxRigidStatic* plane = PxCreatePlane(*gPhysics, PxPlane(1, 0, 0, sideWallRadius + sideWallx / 2.0f), *gMaterial);
+			//	gScene->addActor(*plane);
+			//	continue;
+			//}
+			PxTransform offsetTm(PxVec3(sideWallRadius + sideWallx / 2.0f, 0.0f, 0.0f));
 			PxReal angle = PxPiDivFour;
 			PxQuat localRot(angle * i, PxVec3(0.0f, 0.0f, 1.0f));
 			PxTransform rotTm(localRot);
@@ -131,7 +154,7 @@ protected:
 		}
 
 		// create end walls
-		PxShape * endWallShape = gPhysics->createShape(PxBoxGeometry(3.0f, 3.0f, 0.025f), *gMaterial);
+		PxShape * endWallShape = gPhysics->createShape(PxBoxGeometry(sideWallRadius, sideWallRadius, 0.1f), *gMaterial);
 		for (int i = 0; i < 2; i++) {
 			int flip = 1;
 			if (i == 1)
@@ -150,7 +173,11 @@ protected:
 		//	createStack(PxTransform(PxVec3(0,0,stackZ-=1.0f)), 10, .1f); // small cubes instead
 		//for(PxU32 i=0;i<3;i++)
 		//	createStack(PxTransform(PxVec3(0,0,stackZ-=1.0f)), 10, .1f); // small cubes instead
-		createStack(PxTransform(PxVec3(0, 0, stackZ -= 1.0f)), 3, .1f); // small cubes instead
+		// TODO: the sizes are kinda wrong on the rigid bodies
+		createStack(PxTransform(PxVec3(0, 0, 3.0f)), 3, .1f); // small cubes instead
+		//createStack(PxTransform(PxVec3(0, -0.5f, 3.0f)), 3, .2f); // small cubes instead
+		//createStack(PxTransform(PxVec3(0, -0.0f, -3.0f)), 3, .2f); // small cubes instead
+		addBall();
 
 		if(!interactive)
 			createDynamic(PxTransform(PxVec3(0,40,100)), PxSphereGeometry(10), PxVec3(0,-50,-100));

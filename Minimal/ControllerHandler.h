@@ -47,7 +47,7 @@ public:
 	ControllerHandler(const ovrSession & s, Lighting light);
 	~ControllerHandler();
 
-	void renderHands(const glm::mat4 & projection, const glm::mat4 & modelview, const ovrPosef & eyePose);
+	void renderHands(const glm::mat4 & projection, const glm::mat4 & modelview, const glm::vec3 & eyePos);
 	void updateHandState();
 
 	unsigned int gethandStatus(unsigned int hand) {

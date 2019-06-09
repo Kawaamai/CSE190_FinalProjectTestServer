@@ -4,7 +4,7 @@
 #include "NetTypes.h"
 #include <iostream>
 
-const int MAX_GAME_OBJECTS = 10;
+const int MAX_GAME_OBJECTS = 20;
 
 struct TransformMessageData {
 	NetTransform transform;

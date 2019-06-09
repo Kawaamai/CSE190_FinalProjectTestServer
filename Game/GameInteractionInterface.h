@@ -5,8 +5,11 @@
 
 namespace defgame {
 	const PxReal SWEEP_RADIUS = .2f;
-	const PxReal SWEEP_DIST = 2.0f;
-	const PxReal SWEEP_FORCE = 20.0f;
+	const PxReal SWEEP_DIST = 3.0f;
+	const PxReal SWEEP_FORCE = 40.0f;
+
+	const PxVec3 PLAYER1_START = PxVec3(0.0f, 0.0f, 4.75f);
+	const PxVec3 PLAYER2_START = PxVec3(0.0f, 0.0f, -4.75f);
 }
 
 static void AddSweepPushForce(
@@ -41,6 +44,14 @@ static void AddSweepPushForce(
 				const PxGeometry geom = shapes[j]->getGeometry().any();
 				switch (geom.getType()) {
 				case PxGeometryType::eBOX: {
+					PxU32 hitcount = PxGeometryQuery::sweep(sweepDir, sweepDist, sweepSphere, sweepTransform, geom, tm, hitInfo, hitFlags);
+					//std::cerr << hitcount << std::endl;
+					if (hitcount)
+						reinterpret_cast<PxRigidBody*>(actors[i])->addForce(sweepDir * sweepForce);
+					// TODO: add in early break
+					break;
+				}
+				case PxGeometryType::eSPHERE: {
 					PxU32 hitcount = PxGeometryQuery::sweep(sweepDir, sweepDist, sweepSphere, sweepTransform, geom, tm, hitInfo, hitFlags);
 					//std::cerr << hitcount << std::endl;
 					if (hitcount)

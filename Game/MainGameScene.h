@@ -45,7 +45,6 @@ public:
 		PxReal dist = data.sweepDistance;
 		if (dist == 0.0f)
 			dist = defgame::SWEEP_DIST;
-		std::cerr << dist << std::endl;
 		//std::cerr << "dir: " << sweepDir.x << ", " << sweepDir.y << ", " << sweepDir.z << std::endl;
 		//std::cerr << "pos: " << sweepPos.x << ", " << sweepPos.y << ", " << sweepPos.z << std::endl;
 		PxScene* scene;

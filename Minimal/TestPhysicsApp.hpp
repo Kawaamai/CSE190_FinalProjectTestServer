@@ -27,6 +27,8 @@
 #include "PlayerClient.h"
 #include "Lighting.h"
 #include "TextRenderer.h"
+#include "Skybox.h"
+#include "BasicShader.h"
 
 #include <vector>
 #include <array>
@@ -55,15 +57,9 @@ static void list_audio_devices(const ALCchar *devices) {
 	}
 }
 
-//#define TEST_ERROR(_msg)			\
-//	error = alGetError()			\
-//	if (error != AL_NO_ERROR) {		\
-//		fprintf(stderr, _msg "\n");	\
-//		return -1;					\
-//	}
-//
 static inline ALenum to_al_format(short channels, short samples) {
 	bool stereo = (channels > 1);
+	std::cerr << "stereo " << (stereo ? "true" : "false") << std::endl;
 
 	switch (samples) {
 	case 16:
@@ -87,6 +83,11 @@ private:
 	//Player player;
 	std::unique_ptr<PlayerClient> player;
 	std::array<glm::vec3, 2> playerHeadPose;
+	glm::quat playerHeadOrientation;
+	glm::vec3 getPlayerHeadWorldPosition() {
+		return player->toWorld()
+			* glm::vec4((playerHeadPose.at(ovrEye_Left) + playerHeadPose.at(ovrEye_Right)) / 2.0f, 1.0f);
+	}
 	std::array<glm::vec3, 2> controllerInitPressPos;
 	bool grabbing = false;
 	ovrHandType grabbingHand = ovrHand_Right;
@@ -97,8 +98,10 @@ private:
 	//std::unique_ptr<TestPhysicsScene> sphereScene;
 	std::unique_ptr<GridScene> gridScene;
 	std::unique_ptr<BasicColorGeometryScene> basicShapeRenderer;
+	std::unique_ptr<Skybox> skybox;
+	GLuint skyboxShaderId;
 
-	Lighting sceneLight = Lighting(glm::vec3(0, 0, 0), glm::vec3(1.0f));
+	Lighting sceneLight = Lighting(glm::vec3(5.0f, 1.5f, -2.0f), glm::vec3(1.0f));
 
 	std::unique_ptr<TextRenderer> uiFont;
 
@@ -108,16 +111,29 @@ public:
 protected:
 	void initGl() override {
 		RiftApp::initGl();
-		glClearColor(0.9f, 0.9f, 0.9f, 0.0f); // background color
+		//glClearColor(0.9f, 0.9f, 0.9f, 0.0f); // background color
+		glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // background color
 		glEnable(GL_DEPTH_TEST);
 		ovr_RecenterTrackingOrigin(_session);
 		// Note: to disable lighting, don't pass in sceneLight
 		player = std::make_unique<PlayerClient>(_session, sceneLight);
 		player->initPlayerGL();
-		gridScene = std::make_unique<GridScene>(8, 8, .1f, 0.5f, sceneLight);
+		gridScene = std::make_unique<GridScene>(7, 7, .1f, 0.45f, sceneLight);
 		basicShapeRenderer = std::make_unique<BasicColorGeometryScene>(sceneLight);
+		skybox = std::make_unique<Skybox>("../Minimal/space_skybox");
+		skybox->toWorld = glm::scale(glm::vec3(15.0f)) * glm::rotate(90.0f, glm::vec3(0, 1, 0));
+		skyboxShaderId = LoadShaders("../Minimal/skybox.vert", "../Minimal/skybox.frag");
 		uiFont = std::make_unique<TextRenderer>("../Minimal/fonts/arial.ttf", 24);
-		player->position = glm::vec3(0, 0.5, 0);
+		if (m_client.GetClientIndex() == 0) {
+			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START);
+			player->position = p;
+			gridScene->toWorld = glm::translate(p);
+		} else {
+			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START);
+			player->position = p;
+			gridScene->toWorld = glm::translate(p);
+		}
+
 
 		initAl();
 	}
@@ -129,12 +145,9 @@ protected:
 	void initAl() {
 		ALCdevice *device;
 		ALCcontext *ctx;
-
-
 		ALenum error;
 
 		list_audio_devices(alcGetString(NULL, ALC_DEVICE_SPECIFIER));
-
 
 		// init OpenAL
 		device = alcOpenDevice(NULL); // select the "preferred dev" 
@@ -240,6 +253,7 @@ protected:
 	// score shown on hand
 	void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, ovrEyeType eye, ovrPosef eyePose) override {
 		glm::mat4 view = glm::inverse(player->toWorld() * headPose);
+		skybox->draw(skyboxShaderId, projection, view);
 
 		player->renderControllers(projection, glm::inverse(headPose), eye, eyePose);
 		player->renderHands(projection, glm::inverse(headPose), eye, eyePose);
@@ -250,50 +264,39 @@ protected:
 		//sphereScene->render(projection, view);
 		renderPxScene(projection, view, eyePose);
 
-		std::string scoreDisplayText = "Score: 0";
-		std::string gameStartText = "Right index trigger to start";
+		//std::string scoreDisplayText = "Score: 0";
+		//std::string gameStartText = "Right index trigger to start";
 
 		// left hand text
-		if (player->controllers->gethandStatus(ovrHand_Left)) {
-			//glm::mat4 handPosTrans = glm::translate(controllers->getHandPosition(ovrHand_Left));
-			glm::mat4 handPosTrans = glm::translate(player->getHandPosition(ovrHand_Left));
-			glm::mat4 handRotTrans = glm::mat4_cast(player->controllers->getHandRotation(ovrHand_Left));
-			//                                                                                        (right of hand, above hand, behind hand)
-			glm::mat4 gameStartTextTransform = handPosTrans * (handRotTrans * glm::translate(glm::vec3(0.03f, 0.015f, 0.1f))) * glm::rotate(glm::radians(70.0f), glm::vec3(0, 1, 0));
-			//                                                                                    (right of hand, above hand, behind hand)
-			glm::mat4 scoreTextTransform = handPosTrans * (handRotTrans * glm::translate(glm::vec3(0.03f, -0.005f, 0.1f))) * glm::rotate(glm::radians(70.0f), glm::vec3(0, 1, 0));
-			uiFont->renderText(projection * glm::inverse(headPose) * gameStartTextTransform, gameStartText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
-			uiFont->renderText(projection * glm::inverse(headPose) * scoreTextTransform, scoreDisplayText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
-		}
+		//if (player->controllers->gethandStatus(ovrHand_Left)) {
+		//	//glm::mat4 handPosTrans = glm::translate(controllers->getHandPosition(ovrHand_Left));
+		//	glm::mat4 handPosTrans = glm::translate(player->getHandPosition(ovrHand_Left));
+		//	glm::mat4 handRotTrans = glm::mat4_cast(player->controllers->getHandRotation(ovrHand_Left));
+		//	//                                                                                        (right of hand, above hand, behind hand)
+		//	glm::mat4 gameStartTextTransform = handPosTrans * (handRotTrans * glm::translate(glm::vec3(0.03f, 0.015f, 0.1f))) * glm::rotate(glm::radians(70.0f), glm::vec3(0, 1, 0));
+		//	//                                                                                    (right of hand, above hand, behind hand)
+		//	glm::mat4 scoreTextTransform = handPosTrans * (handRotTrans * glm::translate(glm::vec3(0.03f, -0.005f, 0.1f))) * glm::rotate(glm::radians(70.0f), glm::vec3(0, 1, 0));
+		//	uiFont->renderText(projection * glm::inverse(headPose) * gameStartTextTransform, gameStartText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
+		//	uiFont->renderText(projection * glm::inverse(headPose) * scoreTextTransform, scoreDisplayText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
+		//}
 
-		// render visual of force push
-		//glm::vec3 dir = glm::mat4_cast(player->controllers->getHandRotation(ovrHand_Right)) * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
-		////glm::vec3 pos = player->toWorld() * glm::vec4(controllers->getHandPosition(ovrHand_Right), 1.0f);
-		//glm::vec3 pos = player->getHandPosition(ovrHand_Right);
-		//glm::vec3 pos2 = pos + (2.0f * dir);
-
-		//glm::mat4 _toWorld = glm::translate(pos) * glm::scale(glm::vec3(.03f)) * glm::mat4_cast(player->controllers->getHandRotation(ovrHand_Right));
-		//sphereScene->renderCube(projection, view, _toWorld);
-		//_toWorld = glm::translate(pos2) * glm::scale(glm::vec3(.03f));
-		//sphereScene->renderCube(projection, view, _toWorld);
-
+		glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
 		if (player->controllers->r_IndexTriggerPressed()) {
-			basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right), eyePose, glm::vec3(1, 0, 1));
+			basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right), eyePos, glm::vec3(1, 0, 1));
 			glm::vec3 dir = glm::normalize(player->getHandPosition(ovrHand_Right) - controllerInitPressPos.at(ovrHand_Right));
 			float dist = glm::distance(player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right)) * defgame::SWEEP_DIST;
-			std::cerr << dist << std::endl;
 			glm::vec3 pos = controllerInitPressPos.at(ovrHand_Right) + (dir * dist);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePose, glm::vec3(1.0f, 0.0f, 0.0f));
+			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePos, glm::vec3(1.0f, 0.0f, 0.0f));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 		if (player->controllers->l_IndexTriggerPressed()) {
-			basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left), eyePose, glm::vec3(1, 0, 1));
+			basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left), eyePos, glm::vec3(1, 0, 1));
 			glm::vec3 dir = glm::normalize(player->getHandPosition(ovrHand_Left) - controllerInitPressPos.at(ovrHand_Left));
 			float dist = glm::distance(player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left)) * defgame::SWEEP_DIST;
 			glm::vec3 pos = controllerInitPressPos.at(ovrHand_Left) + (dir * dist);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePose, glm::vec3(1.0f, 0.0f, 0.0f));
+			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePos, glm::vec3(1.0f, 0.0f, 0.0f));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
@@ -303,10 +306,14 @@ protected:
 		//basicShapeRenderer->renderSphere(projection, view, glm::translate(player->getHandPosition(ovrHand_Left)) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS)), eyePose, glm::vec3(1.0f, 0.0f, 0.0f));
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		gridScene->renderCubeGrid(projection, view, eyePose, glm::vec3(1.0f));
+		//gridScene->renderCubeGrid(projection, view, eyePos, glm::vec3(0.3f));
+		gridScene->renderSphereGrid(projection, view, eyePos, glm::vec3(0.3f));
 
 		// render the other playesr TODO:
 		//renderOtherPlayer(projection, view, eyePose);
+
+		// update headOrientation
+		//playerHeadOrientation = ovr::toGlm(eyePose.Orientation);
 	}
 
 	void renderPxScene(const glm::mat4 & projection, const glm::mat4 & view, const ovrPosef eyePose) {
@@ -326,7 +333,8 @@ protected:
 			const PxU32 nbShapes = actors[i]->getNbShapes();
 			PX_ASSERT(nbShapes <= MAX_NUM_ACTOR_SHAPES);
 			actors[i]->getShapes(shapes, nbShapes);
-			const bool sleeping = actors[i]->is<PxRigidDynamic>() ? actors[i]->is<PxRigidDynamic>()->isSleeping() : false;
+			//const bool sleeping = actors[i]->is<PxRigidDynamic>() ? actors[i]->is<PxRigidDynamic>()->isSleeping() : false;
+			const bool isStatic = actors[i]->is<PxRigidStatic>();
 
 			for (PxU32 j = 0; j < nbShapes; j++) {
 				const PxMat44 shapePose(PxShapeExt::getGlobalPose(*shapes[j], *actors[i]));
@@ -343,7 +351,15 @@ protected:
 				if (actors[i]->getType() == PxActorTypeFlag::eRIGID_STATIC) {
 					color = BasicColors::orangeColor;
 				}
-				renderGeometryHolder(projection, view, h, toWorld, eyePose, color);
+				if (isStatic) {
+					glm::mat4 toWorldscaled = toWorld * glm::scale(glm::vec3(0.5, 0.5, 0.5));
+					renderGeometryHolder(projection, view, h, toWorldscaled, eyePose, color);
+					glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+					renderGeometryHolder(projection, view, h, toWorld, eyePose, color);
+					glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+				} else {
+					renderGeometryHolder(projection, view, h, toWorld, eyePose, color);
+				}
 			}
 		}
 	}
@@ -362,6 +378,7 @@ protected:
 		
 		// TODO: send server hand + head transforms
 		UpdatePlayerPos();
+		PxScene* scene;
 	}
 
 	void SendSweepForce(ovrHandType hand) {
@@ -399,11 +416,13 @@ protected:
 		}
 		if (player->controllers->r_IndexTriggerUp()) {
 			SendSweepForce(ovrHand_Right);
+			//alSource3f(source[currentSource], AL_POSITION, controllerInitPressPos.at(ovrHand_Right).x, controllerInitPressPos.at(ovrHand_Right).y, controllerInitPressPos.at(ovrHand_Right).z);
 			alSourcePlay(source[currentSource]);
 			currentSource = (currentSource + 1) % NUM_SOURCES;
 		}
 		if (player->controllers->l_IndexTriggerUp()) {
 			SendSweepForce(ovrHand_Left);
+			//alSource3f(source[currentSource], AL_POSITION, controllerInitPressPos.at(ovrHand_Left).x, controllerInitPressPos.at(ovrHand_Left).y, controllerInitPressPos.at(ovrHand_Left).z);
 			alSourcePlay(source[currentSource]);
 			currentSource = (currentSource + 1) % NUM_SOURCES;
 		}
@@ -433,6 +452,13 @@ protected:
 			glm::vec3 delta = player->controllers->getHandPositionChange(grabbingHand);
 			player->position = glm::translate(-delta) * glm::vec4(player->position, 1.0f);
 		}
+
+		// update for audio purposes
+		//glm::vec3 headWorldPosition = getPlayerHeadWorldPosition();
+		//alListener3f(AL_POSITION, headWorldPosition.x, headWorldPosition.y, headWorldPosition.z);
+		//glm::vec3 up = glm::mat4_cast(playerHeadOrientation) * glm::vec4(0, 1, 0, 1);
+		//ALfloat listenerOri[] = { headWorldPosition.x, headWorldPosition.y, headWorldPosition.z, up.x, up.y, up.z };
+		//alListenerfv(AL_ORIENTATION, listenerOri);
 	}
 
 	PX_FORCE_INLINE void renderGeometryHolder(const glm::mat4& projection, const glm::mat4& view, const PxGeometryHolder& h, const glm::mat4& toWorld, const ovrPosef eyePose, glm::vec3 color) {
@@ -440,29 +466,44 @@ protected:
 	}
 
 	void renderGeometry(const glm::mat4& projection, const glm::mat4& view,const PxGeometry& geom, const glm::mat4& toWorld, const ovrPosef eyePose, glm::vec3 color) {
+		glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
 		switch (geom.getType()) {
 		case PxGeometryType::eBOX: {
 			const PxBoxGeometry& boxGeom = static_cast<const PxBoxGeometry&>(geom);
 			glm::mat4 scale = glm::scale(2.0f * glm::vec3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z));
-			//sphereScene->renderCube(projection, view, toWorld * scale);
-			basicShapeRenderer->renderCube(projection, view, toWorld * scale, eyePose, color);
+			//glm::mat4 scale = glm::scale(glm::vec3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z));
+			basicShapeRenderer->renderCube(projection, view, toWorld * scale, eyePos, color);
 			break;
 		}
 
-		case PxGeometryType::eSPHERE:
+		case PxGeometryType::eSPHERE: {
+			gridScene->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
+			basicShapeRenderer->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
+			const PxSphereGeometry& sphereGeom = static_cast<const PxSphereGeometry&>(geom);
+			glm::mat4 scale = glm::scale(glm::vec3(sphereGeom.radius));
+			basicShapeRenderer->renderSphere(projection, view, toWorld * scale, eyePos, glm::vec3(1.0f));
+			break;
+		}
+		case PxGeometryType::ePLANE: {
+			//const PxPlaneGeometry& planeGeom = static_cast<const PxPlaneGeometry&>(geom);
+			//glm::mat4 scale = glm::scale(glm::vec3(0.2f, 3.0f, 12.0f));
+			////glm::mat4 scale = glm::scale(glm::vec3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z));
+			//basicShapeRenderer->renderCube(projection, view, toWorld * scale, eyePos, color);
+			break;
+		}
 		case PxGeometryType::eCAPSULE:
 		case PxGeometryType::eCONVEXMESH:
 		case PxGeometryType::eTRIANGLEMESH:
 		case PxGeometryType::eINVALID:
 		case PxGeometryType::eHEIGHTFIELD:
 		case PxGeometryType::eGEOMETRY_COUNT:
-		case PxGeometryType::ePLANE:
 			break;
 		}
 	}
 
 	void renderOtherPlayer(const glm::mat4& projection, const glm::mat4& view, const ovrPosef eyePose) {
-		basicShapeRenderer->renderCube(projection, view, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation) * glm::scale(glm::vec3(0.2)), eyePose);
+		glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
+		basicShapeRenderer->renderCube(projection, view, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation) * glm::scale(glm::vec3(0.2)), eyePos);
 	}
 
 	// message stuff --------------------------------------------------------------

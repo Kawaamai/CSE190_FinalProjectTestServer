@@ -28,24 +28,27 @@
 
 class GridScene {
 public:
-	glm::mat3 toWorld = glm::mat4(1.0f);
+	glm::mat4 toWorld = glm::mat4(1.0f);
+
+	Lighting sceneLight;
 
 	GridScene(int width, int height, float objSize, float scale, Lighting light);
 	~GridScene() {}
 
 	void renderSphereGrid(const glm::mat4& projection,
 		const glm::mat4& view,
-		const ovrPosef& eyePose,
+		const glm::vec3& eyePos,
 		glm::vec3 color);
 	void renderCubeGrid(const glm::mat4& projection,
 		const glm::mat4& view,
-		const ovrPosef& eyePose,
+		const glm::vec3& eyePos,
 		glm::vec3 color);
 
 	bool nearGridPoint(const glm::vec3 p);
 
 private:
 	int width = 1, height = 1;
+	float objSize = 1.0f;
 	float scale = 1.0f;
 	oglplus::Program prog;
 
@@ -60,7 +63,5 @@ private:
 	int instanceCount;
 	std::vector<glm::mat4> instancePositions;
 	std::vector<std::vector<glm::vec3>> positions;
-
-	Lighting sceneLight;
 };
 

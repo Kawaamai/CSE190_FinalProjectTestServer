@@ -66,7 +66,7 @@ void BasicColorGeometryScene::renderSphere(
 	const glm::mat4 & projection,
 	const glm::mat4 & view,
 	const glm::mat4 & toWorld,
-	const ovrPosef& eyePose,
+	const glm::vec3& eyePos,
 	glm::vec3 color)
 {
 	using namespace oglplus;
@@ -77,7 +77,7 @@ void BasicColorGeometryScene::renderSphere(
 	Uniform<glm::vec3>(prog, "lightPos").Set(sceneLight.lightPos);
 	Uniform<glm::mat4>(prog, "ModelMatrix").Set(toWorld);
 	Uniform<glm::vec3>(prog, "color").Set(color);
-	Uniform<glm::vec3>(prog, "viewPos").Set(ovr::toGlm(eyePose.Position));
+	Uniform<glm::vec3>(prog, "viewPos").Set(eyePos);
 	sphereVao.Bind();
 	sphere.Draw(1);
 }
@@ -86,7 +86,7 @@ void BasicColorGeometryScene::renderCube(
 	const glm::mat4 & projection,
 	const glm::mat4 & view,
 	const glm::mat4 & toWorld,
-	const ovrPosef& eyePose,
+	const glm::vec3 & eyePos,
 	glm::vec3 color)
 {
 	using namespace oglplus;
@@ -97,7 +97,7 @@ void BasicColorGeometryScene::renderCube(
 	Uniform<glm::vec3>(prog, "lightPos").Set(sceneLight.lightPos);
 	Uniform<glm::mat4>(prog, "ModelMatrix").Set(toWorld);
 	Uniform<glm::vec3>(prog, "color").Set(color);
-	Uniform<glm::vec3>(prog, "viewPos").Set(ovr::toGlm(eyePose.Position));
+	Uniform<glm::vec3>(prog, "viewPos").Set(eyePos);
 	cubeVao.Bind();
 	cube.Draw(1);
 }
@@ -107,7 +107,7 @@ void BasicColorGeometryScene::renderLine(
 	const glm::mat4& view,
 	const glm::vec3& pt1,
 	const glm::vec3& pt2,
-	const ovrPosef& eyePose,
+	const glm::vec3 & eyePos,
 	glm::vec3 color)
 {
 	lineVertices[0] = pt1;

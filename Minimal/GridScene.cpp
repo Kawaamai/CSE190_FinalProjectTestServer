@@ -1,8 +1,9 @@
 #include "GridScene.h"
 
-GridScene::GridScene(int width, int height, float objSize, float scale, Lighting light) : 
+GridScene::GridScene(int width, int height, float objSize, float scale, Lighting light) :
 	width(width),
 	height(height),
+	objSize(objSize),
 	scale(scale),
 	sphere({ "Position", "Normal" }, oglplus::shapes::Sphere(objSize, 18, 12)),
 	cube({ "Position", "Normal" }, oglplus::shapes::Cube(objSize, objSize, objSize)),
@@ -69,7 +70,7 @@ GridScene::GridScene(int width, int height, float objSize, float scale, Lighting
 void GridScene::renderSphereGrid(
 	const glm::mat4 & projection,
 	const glm::mat4 & view,
-	const ovrPosef& eyePose,
+	const glm::vec3 & eyePos,
 	glm::vec3 color)
 {
 	using namespace oglplus;
@@ -80,7 +81,7 @@ void GridScene::renderSphereGrid(
 	Uniform<glm::vec3>(prog, "lightPos").Set(sceneLight.lightPos);
 	Uniform<glm::mat4>(prog, "ModelMatrix").Set(toWorld);
 	Uniform<glm::vec3>(prog, "color").Set(color);
-	Uniform<glm::vec3>(prog, "viewPos").Set(ovr::toGlm(eyePose.Position));
+	Uniform<glm::vec3>(prog, "viewPos").Set(eyePos);
 	sphereVao.Bind();
 	sphere.Draw(instanceCount);
 }
@@ -88,7 +89,7 @@ void GridScene::renderSphereGrid(
 void GridScene::renderCubeGrid(
 	const glm::mat4 & projection,
 	const glm::mat4 & view,
-	const ovrPosef& eyePose,
+	const glm::vec3 & eyePos,
 	glm::vec3 color)
 {
 	using namespace oglplus;
@@ -99,7 +100,7 @@ void GridScene::renderCubeGrid(
 	Uniform<glm::vec3>(prog, "lightPos").Set(sceneLight.lightPos);
 	Uniform<glm::mat4>(prog, "ModelMatrix").Set(toWorld);
 	Uniform<glm::vec3>(prog, "color").Set(color);
-	Uniform<glm::vec3>(prog, "viewPos").Set(ovr::toGlm(eyePose.Position));
+	Uniform<glm::vec3>(prog, "viewPos").Set(eyePos);
 	cubeVao.Bind();
 	cube.Draw(instanceCount);
 }
@@ -107,7 +108,7 @@ void GridScene::renderCubeGrid(
 bool GridScene::nearGridPoint(const glm::vec3 p) {
 	for (const std::vector<glm::vec3>& v : positions) {
 		for (const glm::vec3& gp : v) {
-			if (glm::distance(p, gp) < .2f)
+			if (glm::distance(glm::vec3(toWorld * glm::vec4(gp, 1.0f)), p) < objSize + .05f)
 				return true;
 		}
 	}
