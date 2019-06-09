@@ -31,8 +31,59 @@
 #include <vector>
 #include <array>
 
+// openal
+#include "AL/al.h"
+#include "AL/alc.h"
+
+// handle wav files
+#define DR_WAV_IMPLEMENTATION
+#include "dr_wav.h"
+
+#define NUM_SOURCES 8
+
+static void list_audio_devices(const ALCchar *devices) {
+	const ALCchar* device = devices, *next = devices + 1;
+	size_t len = 0;
+
+	std::cout << "Devices list:\n";
+	std::cout << "----------\n";
+	while (device && *device != '\0' && next && *next != '\0') {
+		std::cout << device << '\n';
+		len = strlen(device);
+		device += (len + 1);
+		next += (len + 2);
+	}
+}
+
+//#define TEST_ERROR(_msg)			\
+//	error = alGetError()			\
+//	if (error != AL_NO_ERROR) {		\
+//		fprintf(stderr, _msg "\n");	\
+//		return -1;					\
+//	}
+//
+static inline ALenum to_al_format(short channels, short samples) {
+	bool stereo = (channels > 1);
+
+	switch (samples) {
+	case 16:
+		if (stereo)
+			return AL_FORMAT_STEREO16;
+		else
+			return AL_FORMAT_MONO16;
+	case 8:
+		if (stereo)
+			return AL_FORMAT_STEREO8;
+		else
+			return AL_FORMAT_MONO8;
+	default:
+		return -1;
+	}
+}
+
 // An example application that renders a simple cube
 class TestPhysicsApp : public RiftApp, public GameClient {
+private:
 	//Player player;
 	std::unique_ptr<PlayerClient> player;
 	std::array<glm::vec3, 2> playerHeadPose;
@@ -50,6 +101,7 @@ class TestPhysicsApp : public RiftApp, public GameClient {
 	Lighting sceneLight = Lighting(glm::vec3(0, 0, 0), glm::vec3(1.0f));
 
 	std::unique_ptr<TextRenderer> uiFont;
+
 public:
 	TestPhysicsApp(const yojimbo::Address& serverAddress) : GameClient(serverAddress) {}
 
@@ -66,11 +118,123 @@ protected:
 		basicShapeRenderer = std::make_unique<BasicColorGeometryScene>(sceneLight);
 		uiFont = std::make_unique<TextRenderer>("../Minimal/fonts/arial.ttf", 24);
 		player->position = glm::vec3(0, 0.5, 0);
+
+		initAl();
+	}
+
+	ALuint buffer;
+	ALuint source[NUM_SOURCES];
+	int currentSource = 0;
+
+	void initAl() {
+		ALCdevice *device;
+		ALCcontext *ctx;
+
+
+		ALenum error;
+
+		list_audio_devices(alcGetString(NULL, ALC_DEVICE_SPECIFIER));
+
+
+		// init OpenAL
+		device = alcOpenDevice(NULL); // select the "preferred dev" 
+
+		if (device) {
+			ctx = alcCreateContext(device, NULL);
+			if (ctx == NULL || alcMakeContextCurrent(ctx) == ALC_FALSE) {
+				if (ctx != NULL)
+					alcDestroyContext(ctx);
+				alcCloseDevice(device);
+				throw std::runtime_error("could not set context1");
+			}
+		} else {
+			throw std::runtime_error("failed device making");
+		}
+
+		buffer = LoadSound();
+		if (!buffer) {
+			CloseAL();
+			throw std::runtime_error("sound buffer failed to create");
+		}
+
+		// create the source to play the sound with
+		//source = 0;
+		alGenSources(NUM_SOURCES, source);
+		for (int i = 0; i < NUM_SOURCES; i++) {
+			alSourcei(source[i], AL_BUFFER, buffer);
+			assert(alGetError() == AL_NO_ERROR && "Failed to setup soiund source");
+		}
+
+		// play the sound
+		//alSourcePlay(source);
+	}
+
+	ALuint LoadSound() {
+		ALuint _buffer;
+		ALenum error;
+		ALenum format;
+
+		// open the audio file
+		drwav* pWav = drwav_open_file("../Sounds/Woosh-Mark_DiAngelo-4778593.wav");
+		if (pWav == NULL) {
+			throw std::runtime_error("failed to read wav file");
+		}
+
+		// figure out the format
+		format = to_al_format(pWav->channels, pWav->bitsPerSample);
+		if (format == -1) {
+			throw std::runtime_error("unsupported format " + std::to_string(pWav->channels) + " " + std::to_string(pWav->bitsPerSample));
+		}
+
+		// readthe audio file
+		size_t dataSize = (size_t)pWav->totalPCMFrameCount * pWav->channels * sizeof(int32_t);
+		int32_t* pSampleData = (int32_t*)malloc(dataSize);
+		drwav_read_s32(pWav, pWav->totalPCMFrameCount, pSampleData);
+
+		// buffer the audio data into a new buffer object,
+		// then free the data and close the file
+		_buffer = 0;
+		alGenBuffers(1, &_buffer);
+		alBufferData(_buffer, format, pSampleData, dataSize, pWav->sampleRate);
+
+		// check for errors
+		error = alGetError();
+		if (error != AL_NO_ERROR) {
+			std::cerr << "OpenAL ERROR: " << alGetString(error) << std::endl;
+			alDeleteBuffers(1, &_buffer);
+			throw std::runtime_error("OpenAL Error");
+		}
+
+		// end of load buffer
+		// can return buffer here if within a function
+		// cleanup wav data
+		//free(pSampleData); // yes like a good boi
+		drwav_close(pWav);
+
+		return _buffer;
 	}
 
 	void shutdownGl() override {
 		//sphereScene.reset();
 		player->cleanupGl();
+		CloseAL();
+	}
+
+	void CloseAL() {
+		alDeleteSources(NUM_SOURCES, source);
+		alDeleteBuffers(1, &buffer);
+
+		// shutdown openAl
+		ALCdevice* device;
+		ALCcontext* ctx;
+		ctx = alcGetCurrentContext();
+		if (ctx == NULL)
+			return;
+
+		device = alcGetContextsDevice(ctx);
+		alcMakeContextCurrent(NULL);
+		alcDestroyContext(ctx);
+		alcCloseDevice(device);
 	}
 
 	// score shown on hand
@@ -235,9 +399,13 @@ protected:
 		}
 		if (player->controllers->r_IndexTriggerUp()) {
 			SendSweepForce(ovrHand_Right);
+			alSourcePlay(source[currentSource]);
+			currentSource = (currentSource + 1) % NUM_SOURCES;
 		}
 		if (player->controllers->l_IndexTriggerUp()) {
 			SendSweepForce(ovrHand_Left);
+			alSourcePlay(source[currentSource]);
+			currentSource = (currentSource + 1) % NUM_SOURCES;
 		}
 
 		if (player->controllers->r_HandTriggerDown()) {

@@ -168,6 +168,9 @@
     <ClInclude Include="..\Minimal\GridScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="dr_wav.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Minimal\Minimal.rc">

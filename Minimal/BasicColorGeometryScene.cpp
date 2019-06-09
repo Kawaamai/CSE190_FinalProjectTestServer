@@ -48,7 +48,6 @@ BasicColorGeometryScene::BasicColorGeometryScene(Lighting light) :
 	}
 
 	// line
-	std::cerr << "line gen vao and vbo" << std::endl;
 	glGenVertexArrays(1, &lineVao);
 	glGenBuffers(1, &lineVbo);
 
