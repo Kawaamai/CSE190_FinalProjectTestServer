@@ -139,6 +139,7 @@
     <ClInclude Include="..\Game\PhysXServerApp.h" />
     <ClInclude Include="..\Game\Player.h" />
     <ClInclude Include="..\Minimal\AvatarHandler.h" />
+    <ClInclude Include="..\Minimal\BallModel.h" />
     <ClInclude Include="..\Minimal\BasicColorGeometryScene.h" />
     <ClInclude Include="..\Minimal\BasicShader.h" />
     <ClInclude Include="..\Minimal\ControllerHandler.h" />
@@ -148,6 +149,8 @@
     <ClInclude Include="..\Minimal\ExampleApp.hpp" />
     <ClInclude Include="..\Minimal\GlfwApp.h" />
     <ClInclude Include="..\Minimal\GridScene.h" />
+    <ClInclude Include="..\Minimal\HandModel.h" />
+    <ClInclude Include="..\Minimal\HeadModel.h" />
     <ClInclude Include="..\Minimal\Lighting.h" />
     <ClInclude Include="..\Minimal\Mesh.h" />
     <ClInclude Include="..\Minimal\Model.h" />
@@ -199,6 +202,7 @@
     <None Include="..\Minimal\basicTexture.frag" />
     <None Include="..\Minimal\basicTexture.vert" />
     <None Include="..\Minimal\basicVertex.vs" />
+    <None Include="..\Minimal\blinnPhongColor.vert" />
     <None Include="..\Minimal\brightnessFalloff.frag" />
     <None Include="..\Minimal\brightnessFalloff.vert" />
     <None Include="..\Minimal\cube\back.ppm" />
@@ -211,6 +215,8 @@
     <None Include="..\Minimal\defCubeVS.vs" />
     <None Include="..\Minimal\lightedColor.frag" />
     <None Include="..\Minimal\lightedColor.vert" />
+    <None Include="..\Minimal\modelLoading.frag" />
+    <None Include="..\Minimal\modelLoading.vert" />
     <None Include="..\Minimal\oglBasicColor.frag" />
     <None Include="..\Minimal\oglBasicColor.vert" />
     <None Include="..\Minimal\oglBlinnPhongColor.frag" />

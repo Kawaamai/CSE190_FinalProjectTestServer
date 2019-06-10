@@ -15,3 +15,9 @@ public:
 		return glm::translate(position);
 	}
 };
+
+class PlayerServer : public Player {
+public:
+	glm::vec3 lhandPosition, rhandPosition;
+	glm::quat lhandOrientation, rhandOrientation;
+};

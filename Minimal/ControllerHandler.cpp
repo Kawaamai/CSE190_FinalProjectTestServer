@@ -5,7 +5,8 @@ ControllerHandler::ControllerHandler(const ovrSession & s, Lighting light) :
 	_session(s),
 	sceneLight(light)
 {
-	basicShapeRenderer = std::make_unique<BasicColorGeometryScene>(light);
+	//basicShapeRenderer = std::make_unique<BasicColorGeometryScene>(light);
+	handModel = std::make_unique<HandModel>();
 }
 
 
@@ -22,14 +23,16 @@ void ControllerHandler::renderHands(const glm::mat4 & projection, const glm::mat
 		glm::mat4 transform = glm::translate(glm::mat4(1.0), handPosition);
 		glm::mat4 rotTm = glm::mat4_cast(ovr::toGlm(handPoses[ovrHand_Left].Orientation));
 		glm::mat4 scaleTm = glm::scale(glm::vec3(scale));
-		basicShapeRenderer->renderCube(projection, modelview, transform * rotTm * scaleTm, eyePos, glm::vec3(1.0, 0.0, 1.0));
+		//basicShapeRenderer->renderCube(projection, modelview, transform * rotTm * scaleTm, eyePos, glm::vec3(1.0, 0.0, 1.0));
+		handModel->render(projection, modelview, eyePos, sceneLight.lightPos, transform * rotTm, ovrHand_Left);
 	}
 	if (handStatus[ovrHand_Right]) {
 		glm::vec3 handPosition = ovr::toGlm(handPoses[ovrHand_Right].Position);
 		glm::mat4 transform = glm::translate(glm::mat4(1.0), handPosition);
 		glm::mat4 rotTm = glm::mat4_cast(ovr::toGlm(handPoses[ovrHand_Right].Orientation));
 		glm::mat4 scaleTm = glm::scale(glm::vec3(scale));
-		basicShapeRenderer->renderCube(projection, modelview, transform * rotTm * scaleTm, eyePos, glm::vec3(1.0, 0.0, 1.0));
+		//basicShapeRenderer->renderCube(projection, modelview, transform * rotTm * scaleTm, eyePos, glm::vec3(1.0, 0.0, 1.0));
+		handModel->render(projection, modelview, eyePos, sceneLight.lightPos, transform * rotTm, ovrHand_Right);
 	}
 
 }

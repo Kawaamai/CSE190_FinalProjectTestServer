@@ -12,6 +12,8 @@
 
 #include "OvrHelper.h"
 #include "BasicColorGeometryScene.h"
+#include "HandModel.h"
+#include "Lighting.h"
 
 class ControllerHandler
 {
@@ -33,7 +35,8 @@ public:
 	ovrInputState prevInputState, currInputState;
 	
 
-	std::unique_ptr<BasicColorGeometryScene> basicShapeRenderer;
+	//std::unique_ptr<BasicColorGeometryScene> basicShapeRenderer;
+	std::unique_ptr<HandModel> handModel;
 	const glm::vec3 scale = glm::vec3(0.01f);
 
 	const float handOffset = 0.1f;

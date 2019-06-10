@@ -106,15 +106,23 @@ void GameServer::SendSceneSnapshot() {
 
 void GameServer::SendPlayerPositions() {
 	ForEachConnectedClient([&](int clientIdx) {
-		const std::array<Player, MAX_PLAYERS>& players = m_scene.getPlayers();
+		const std::array<PlayerServer, MAX_PLAYERS>& players = m_scene.getPlayers();
 
 		for (int i = 0; i < MAX_PLAYERS; i++) {
 			PlayerUpdateMessage* message = (PlayerUpdateMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::PLAYER_UPDATE);
-			message->m_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
-			//message->m_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
-			//message->m_data.transform.position.z = message->m_data.transform.position.z * -1; // for testing
-			message->m_data.transform.orientation = converter::glmQuatToNetQuat(players.at(i).orientation);
-			message->m_data.int_uniqueGameObjectId = clientIdx;
+			message->p_data.int_uniqueGameObjectId = clientIdx;
+			// player position
+			message->p_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
+			//message->p_data.transform.position.z = message->p_data.transform.position.z * -1; // for testing
+			message->p_data.transform.orientation = converter::glmQuatToNetQuat(players.at(i).orientation);
+
+			// hand positions
+			message->l_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).lhandPosition);
+			message->r_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).rhandPosition);
+			message->l_data.transform.orientation = converter::glmQuatToNetQuat(players.at(i).lhandOrientation);
+			message->r_data.transform.orientation = converter::glmQuatToNetQuat(players.at(i).rhandOrientation);
+
+			// send the info the the (other) client
 			if (i != clientIdx) {
 				m_server.SendMessage(clientIdx, (int)GameChannel::UNRELIABLE, message);
 			}
@@ -183,7 +191,7 @@ void GameServer::ProcessTransformMessage(int clientIndex, TransformMessage * mes
 }
 
 void GameServer::ProcessPlayerUpdateMessage(int clientIndex, PlayerUpdateMessage * message) {
-	m_scene.UpdatePlayer(clientIndex, message->m_data);
+	m_scene.UpdatePlayer(clientIndex, message->p_data, message->l_data, message->r_data);
 }
 
 void GameServer::ProcessSweepForceInputMessage(int clientIndex, SweepForceInputMessage * message) {

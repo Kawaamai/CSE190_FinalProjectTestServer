@@ -4,7 +4,7 @@
 #include "NetTypes.h"
 #include <iostream>
 
-const int MAX_GAME_OBJECTS = 20;
+const int MAX_GAME_OBJECTS = 40;
 
 struct TransformMessageData {
 	NetTransform transform;
@@ -51,5 +51,39 @@ public:
 	YOJIMBO_VIRTUAL_SERIALIZE_FUNCTIONS();
 };
 
-//#define PlayerUpdateMessage TransformMessage;
-typedef TransformMessage PlayerUpdateMessage;
+//typedef TransformMessage PlayerUpdateMessage;
+class PlayerUpdateMessage : public yojimbo::Message {
+public:
+	TransformMessageData p_data, l_data, r_data;
+
+	template <typename Stream>
+	bool Serialize(Stream& stream) {
+		serialize_float(stream, p_data.transform.position.x);
+		serialize_float(stream, p_data.transform.position.y);
+		serialize_float(stream, p_data.transform.position.z);
+		serialize_float(stream, p_data.transform.orientation.x);
+		serialize_float(stream, p_data.transform.orientation.y);
+		serialize_float(stream, p_data.transform.orientation.z);
+		serialize_float(stream, p_data.transform.orientation.w);
+		serialize_float(stream, l_data.transform.position.x);
+		serialize_float(stream, l_data.transform.position.y);
+		serialize_float(stream, l_data.transform.position.z);
+		serialize_float(stream, l_data.transform.orientation.x);
+		serialize_float(stream, l_data.transform.orientation.y);
+		serialize_float(stream, l_data.transform.orientation.z);
+		serialize_float(stream, l_data.transform.orientation.w);
+		serialize_float(stream, r_data.transform.position.x);
+		serialize_float(stream, r_data.transform.position.y);
+		serialize_float(stream, r_data.transform.position.z);
+		serialize_float(stream, r_data.transform.orientation.x);
+		serialize_float(stream, r_data.transform.orientation.y);
+		serialize_float(stream, r_data.transform.orientation.z);
+		serialize_float(stream, r_data.transform.orientation.w);
+		// TODO: change min back to 0 to detect when we don't send with correct gameobject id
+		//serialize_int(stream, m_data.int_uniqueGameObjectId, 0, MAX_GAME_OBJECTS);
+		serialize_int(stream, p_data.int_uniqueGameObjectId, -1, MAX_GAME_OBJECTS);
+		return true;
+	}
+
+	YOJIMBO_VIRTUAL_SERIALIZE_FUNCTIONS();
+};

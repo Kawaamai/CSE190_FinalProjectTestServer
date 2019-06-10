@@ -87,7 +87,7 @@ protected:
 				PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm).transform(forwardOffset));
 				body->attachShape(*shape);
 				//PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-				PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+				PxRigidBodyExt::updateMassAndInertia(*body, 5.0f);
 				gScene->addActor(*body);
 			}
 		}
@@ -95,7 +95,7 @@ protected:
 	}
 
 	void addBall(PxTransform tm = PxTransform(PxVec3(0.0))) {
-		PxShape* shape = gPhysics->createShape(PxSphereGeometry(.1f), *gMaterial);
+		PxShape* shape = gPhysics->createShape(PxSphereGeometry(.2f), *gMaterial);
 		PxTransform localTm(PxVec3(0.0));
 		PxRigidDynamic* body = gPhysics->createRigidDynamic(tm.transform(localTm));
 		body->attachShape(*shape);
@@ -122,9 +122,10 @@ protected:
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 		}
-		gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-		//gMaterial = gPhysics->createMaterial(0.3f, 0.3f, 1.0f);
+		//gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+		gMaterial = gPhysics->createMaterial(0.0f, 0.3f, 1.0f);
 
+		// testing
 		//PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
 		//gScene->addActor(*groundPlane);
 
@@ -174,9 +175,10 @@ protected:
 		//for(PxU32 i=0;i<3;i++)
 		//	createStack(PxTransform(PxVec3(0,0,stackZ-=1.0f)), 10, .1f); // small cubes instead
 		// TODO: the sizes are kinda wrong on the rigid bodies
-		createStack(PxTransform(PxVec3(0, 0, 3.0f)), 3, .1f); // small cubes instead
-		//createStack(PxTransform(PxVec3(0, -0.5f, 3.0f)), 3, .2f); // small cubes instead
-		//createStack(PxTransform(PxVec3(0, -0.0f, -3.0f)), 3, .2f); // small cubes instead
+		//createStack(PxTransform(PxVec3(0, 0, 3.0f)), 3, .1f); // small cubes instead
+		//createStack(PxTransform(PxVec3(0, 0, 3.0f)), 3, .2f); // small cubes instead
+		createStack(PxTransform(PxVec3(0, -0.5f, 3.0f)), 5, .2f); // small cubes instead
+		createStack(PxTransform(PxVec3(0, -0.0f, -3.0f)), 5, .2f); // small cubes instead
 		addBall();
 
 		if(!interactive)

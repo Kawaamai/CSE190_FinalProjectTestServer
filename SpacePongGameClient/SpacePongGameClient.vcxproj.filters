@@ -171,6 +171,15 @@
     <ClInclude Include="dr_wav.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Minimal\HeadModel.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\BallModel.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Minimal\HandModel.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Minimal\Minimal.rc">
@@ -302,6 +311,15 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Minimal\oglBlinnPhongColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\modelLoading.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\modelLoading.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\blinnPhongColor.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

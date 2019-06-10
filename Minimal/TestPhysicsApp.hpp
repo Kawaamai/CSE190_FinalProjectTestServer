@@ -29,6 +29,9 @@
 #include "TextRenderer.h"
 #include "Skybox.h"
 #include "BasicShader.h"
+#include "HeadModel.h"
+#include "BallModel.h"
+#include "HandModel.h"
 
 #include <vector>
 #include <array>
@@ -42,6 +45,9 @@
 #include "dr_wav.h"
 
 #define NUM_SOURCES 8
+
+// TODO: remove
+#include <glm/gtx/string_cast.hpp>
 
 static void list_audio_devices(const ALCchar *devices) {
 	const ALCchar* device = devices, *next = devices + 1;
@@ -92,7 +98,7 @@ private:
 	bool grabbing = false;
 	ovrHandType grabbingHand = ovrHand_Right;
 
-	Player otherPlayer;
+	PlayerServer otherPlayer;
 
 	// sphere grid
 	//std::unique_ptr<TestPhysicsScene> sphereScene;
@@ -104,6 +110,10 @@ private:
 	Lighting sceneLight = Lighting(glm::vec3(5.0f, 1.5f, -2.0f), glm::vec3(1.0f));
 
 	std::unique_ptr<TextRenderer> uiFont;
+
+	std::unique_ptr<HeadModel> headModel;
+	std::unique_ptr<BallModel> ballModel;
+	std::unique_ptr<HandModel> handModel;
 
 public:
 	TestPhysicsApp(const yojimbo::Address& serverAddress) : GameClient(serverAddress) {}
@@ -134,6 +144,9 @@ protected:
 			gridScene->toWorld = glm::translate(p);
 		}
 
+		headModel = std::make_unique<HeadModel>();
+		ballModel = std::make_unique<BallModel>();
+		handModel = std::make_unique<HandModel>();
 
 		initAl();
 	}
@@ -282,19 +295,21 @@ protected:
 
 		glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
 		if (player->controllers->r_IndexTriggerPressed()) {
-			basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right), eyePos, glm::vec3(1, 0, 1));
 			glm::vec3 dir = glm::normalize(player->getHandPosition(ovrHand_Right) - controllerInitPressPos.at(ovrHand_Right));
 			float dist = glm::distance(player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right)) * defgame::SWEEP_DIST;
 			glm::vec3 pos = controllerInitPressPos.at(ovrHand_Right) + (dir * dist);
+			//basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right), eyePos, glm::vec3(1, 0, 1));
+			basicShapeRenderer->renderLine(projection, view, pos, controllerInitPressPos.at(ovrHand_Right), eyePos, glm::vec3(1, 0, 1));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePos, glm::vec3(1.0f, 0.0f, 0.0f));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 		if (player->controllers->l_IndexTriggerPressed()) {
-			basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left), eyePos, glm::vec3(1, 0, 1));
 			glm::vec3 dir = glm::normalize(player->getHandPosition(ovrHand_Left) - controllerInitPressPos.at(ovrHand_Left));
 			float dist = glm::distance(player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left)) * defgame::SWEEP_DIST;
 			glm::vec3 pos = controllerInitPressPos.at(ovrHand_Left) + (dir * dist);
+			//basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left), eyePos, glm::vec3(1, 0, 1));
+			basicShapeRenderer->renderLine(projection, view, pos, controllerInitPressPos.at(ovrHand_Left), eyePos, glm::vec3(1, 0, 1));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePos, glm::vec3(1.0f, 0.0f, 0.0f));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -310,10 +325,11 @@ protected:
 		gridScene->renderSphereGrid(projection, view, eyePos, glm::vec3(0.3f));
 
 		// render the other playesr TODO:
-		//renderOtherPlayer(projection, view, eyePose);
+		renderOtherPlayer(projection, view, eyePos);
 
 		// update headOrientation
 		//playerHeadOrientation = ovr::toGlm(eyePose.Orientation);
+		//headModel->render(projection, view, eyePos, sceneLight->lightPos, );
 	}
 
 	void renderPxScene(const glm::mat4 & projection, const glm::mat4 & view, const ovrPosef eyePose) {
@@ -391,7 +407,7 @@ protected:
 		// TODO: Determine if I want to do this or if this is redundent
 		//PxScene* scene;
 		//PxGetPhysics().getScenes(&scene, 1);
-		//AddSweepPushForce(scene, sweepDir, sweepPos);
+		//AddSweepPushForce(scene, sweepDir, sweepPos, defgame::SWEEP_RADIUS, dist);
 
 		if (m_client.IsConnected()) {
 			std::cerr << "send sweep force" << std::endl;
@@ -402,6 +418,7 @@ protected:
 
 			message->m_data.sweepDir = net_sweepDir;
 			message->m_data.sweepPos = net_sweepPos;
+			message->m_data.sweepRadius = defgame::SWEEP_RADIUS;
 			message->m_data.sweepDistance = dist;
 			m_client.SendMessage((int)GameChannel::RELIABLE, message);
 		}
@@ -438,6 +455,8 @@ protected:
 				grabbing = true;
 				grabbingHand = ovrHand_Left;
 			}
+	glm::mat4 lhandLocal = glm::rotate(95.0f, glm::vec3(-1, 0, 0));
+	glm::mat4 rhandLocal = glm::rotate(-85.0f, glm::vec3(1, 0, 0));
 		}
 		if (player->controllers->r_HandTriggerUp() && grabbingHand == ovrHand_Right) {
 			grabbing = false;
@@ -477,11 +496,20 @@ protected:
 		}
 
 		case PxGeometryType::eSPHERE: {
+			// update scene light position. a little hacky since it is in the render loop
 			gridScene->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
 			basicShapeRenderer->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
-			const PxSphereGeometry& sphereGeom = static_cast<const PxSphereGeometry&>(geom);
-			glm::mat4 scale = glm::scale(glm::vec3(sphereGeom.radius));
-			basicShapeRenderer->renderSphere(projection, view, toWorld * scale, eyePos, glm::vec3(1.0f));
+			player->controllers->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
+			sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
+			//const PxSphereGeometry& sphereGeom = static_cast<const PxSphereGeometry&>(geom);
+			//glm::mat4 scale = glm::scale(glm::vec3(sphereGeom.radius));
+
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			//basicShapeRenderer->renderSphere(projection, view, toWorld * scale, eyePos, glm::vec3(1.0f));
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+			ballModel->render(projection, view, eyePos, sceneLight.lightPos, toWorld);
+
 			break;
 		}
 		case PxGeometryType::ePLANE: {
@@ -501,9 +529,13 @@ protected:
 		}
 	}
 
-	void renderOtherPlayer(const glm::mat4& projection, const glm::mat4& view, const ovrPosef eyePose) {
-		glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
-		basicShapeRenderer->renderCube(projection, view, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation) * glm::scale(glm::vec3(0.2)), eyePos);
+	void renderOtherPlayer(const glm::mat4& projection, const glm::mat4& view, const glm::vec3& eyePos) {
+		//glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
+		//basicShapeRenderer->renderCube(projection, view, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation) * glm::scale(glm::vec3(0.2)), eyePos);
+		//headModel->render(projection, view, eyePos, sceneLight.lightPos, otherPlayer.toWorld() * glm::mat4_cast(otherPlayer.orientation));
+		headModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation));
+		handModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.lhandPosition) * glm::mat4_cast(otherPlayer.lhandOrientation), ovrHand_Left);
+		handModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.rhandPosition) * glm::mat4_cast(otherPlayer.rhandOrientation), ovrHand_Right);
 	}
 
 	// message stuff --------------------------------------------------------------
@@ -512,8 +544,12 @@ protected:
 		PlayerUpdateMessage* message = (PlayerUpdateMessage*)m_client.CreateMessage((int)GameMessageType::PLAYER_UPDATE);
 		//message->m_data.transform.position = converter::glmVec3ToNetVec3(players.at(i).position);
 		glm::vec3 headPose = (playerHeadPose[0] + playerHeadPose[1]) / 2.0f;
-		message->m_data.transform.position = converter::glmVec3ToNetVec3(player->toWorld() * glm::vec4(headPose, 1.0f));
-		message->m_data.transform.orientation = converter::glmQuatToNetQuat(player->orientation);
+		message->p_data.transform.position = converter::glmVec3ToNetVec3(player->toWorld() * glm::vec4(headPose, 1.0f));
+		message->p_data.transform.orientation = converter::glmQuatToNetQuat(player->orientation);
+		message->l_data.transform.position = converter::glmVec3ToNetVec3(player->getHandPosition(ovrHand_Left));
+		message->r_data.transform.position = converter::glmVec3ToNetVec3(player->getHandPosition(ovrHand_Right));
+		message->l_data.transform.orientation = converter::glmQuatToNetQuat(player->controllers->getHandRotation(ovrHand_Left));
+		message->r_data.transform.orientation = converter::glmQuatToNetQuat(player->controllers->getHandRotation(ovrHand_Right));
 		m_client.SendMessage((int)GameChannel::UNRELIABLE, message);
 	}
 
@@ -551,8 +587,12 @@ protected:
 
 	// TODO:
 	void ProcessPlayerUpdateMessage(PlayerUpdateMessage * message) override {
-		otherPlayer.position = converter::NetVec3ToglmVec3(message->m_data.transform.position);
-		otherPlayer.orientation = converter::NetQuatToglmQuat(message->m_data.transform.orientation);
+		otherPlayer.position = converter::NetVec3ToglmVec3(message->p_data.transform.position);
+		otherPlayer.orientation = converter::NetQuatToglmQuat(message->p_data.transform.orientation);
+		otherPlayer.lhandPosition = converter::NetVec3ToglmVec3(message->l_data.transform.position);
+		otherPlayer.rhandPosition = converter::NetVec3ToglmVec3(message->r_data.transform.position);
+		otherPlayer.lhandOrientation = converter::NetQuatToglmQuat(message->l_data.transform.orientation);
+		otherPlayer.rhandOrientation = converter::NetQuatToglmQuat(message->r_data.transform.orientation);
 	}
 };
 

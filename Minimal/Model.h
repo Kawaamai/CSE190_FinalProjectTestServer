@@ -24,11 +24,19 @@
 #include <vector>
 using namespace std;
 
+//struct Material {
+//	glm::vec3 Diffuse;
+//	glm::vec3 Specular;
+//	glm::vec3 Ambient;
+//	float Shininess;
+//};
+
 class Model 
 {
 public:
     /*  Model Data */
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+	//vector<Material> materials;
     vector<Mesh> meshes;
     string directory;
     bool gammaCorrection;
@@ -59,7 +67,9 @@ private:
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
     // the required info is returned as a Texture struct.
-	vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName);
+	//vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName);
+
+	//Material loadMaterial(aiMaterial* mat);
 };
 #endif
 
