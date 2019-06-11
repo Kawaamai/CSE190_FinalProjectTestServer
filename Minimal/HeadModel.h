@@ -16,7 +16,7 @@ private:
 	//Shader shader = Shader("../Minimal/modelLoading.vert", "../Minimal/modelLoading.frag");
 
 	glm::vec4 defColor = glm::vec4(1, 0, 1, 1);
-	glm::mat4 scale = glm::scale(glm::vec3(.2));
+	glm::mat4 scale = glm::scale(glm::vec3(.3));
 
 public:
 	void render(const glm::mat4& projection, const glm::mat4& view, const glm::vec3& eyePos, const glm::vec3& lightPos, const glm::mat4& toWorld) {
