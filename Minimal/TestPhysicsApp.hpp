@@ -312,7 +312,7 @@ protected:
 
 
 		//// render the other playesr TODO:
-		shadowrenderOtherPlayer(projection, view);
+		//shadowrenderOtherPlayer(projection, view);
 
 		// cleanup
 		glCullFace(GL_BACK);
@@ -321,8 +321,8 @@ protected:
 
 	}
 
-	// score shown on hand
 	void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, ovrEyeType eye, ovrPosef eyePose) override {
+		//glm::mat4 view = glm::inverse((player->toWorld() * glm::mat4_cast(player->baseOrientation)) * headPose);
 		glm::mat4 view = glm::inverse(player->toWorld() * headPose);
 		skybox->draw(skyboxShaderId, projection, view);
 
@@ -529,7 +529,8 @@ protected:
 	void UpdatePlayerPos() {
 		if (grabbing) {
 			glm::vec3 delta = player->controllers->getHandPositionChange(grabbingHand);
-			player->position = glm::translate(-delta) * glm::vec4(player->position, 1.0f);
+			//player->position = glm::translate(-delta) * glm::vec4(player->position, 1.0f);
+			player->position = player->toWorld() * glm::translate(-delta) * glm::vec4(0, 0, 0, 1);
 		}
 
 		// update for audio purposes
@@ -599,9 +600,9 @@ protected:
 		//glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
 		//basicShapeRenderer->renderCube(projection, view, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation) * glm::scale(glm::vec3(0.2)), eyePos);
 		//headModel->render(projection, view, eyePos, sceneLight.lightPos, otherPlayer.toWorld() * glm::mat4_cast(otherPlayer.orientation));
-		headModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation));
-		handModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.lhandPosition) * glm::mat4_cast(otherPlayer.lhandOrientation), ovrHand_Left);
-		handModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.rhandPosition) * glm::mat4_cast(otherPlayer.rhandOrientation), ovrHand_Right);
+		headModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation) * glm::mat4_cast(otherPlayer.baseOrientation));
+		handModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.lhandPosition) * glm::mat4_cast(otherPlayer.lhandOrientation) * glm::mat4_cast(otherPlayer.baseOrientation), ovrHand_Left);
+		handModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.rhandPosition) * glm::mat4_cast(otherPlayer.rhandOrientation) * glm::mat4_cast(otherPlayer.baseOrientation), ovrHand_Right);
 	}
 
 	void shadowrenderOtherPlayer(const glm::mat4& projection, const glm::mat4& view) {
@@ -631,9 +632,12 @@ protected:
 			player->position = p;
 			gridScene->toWorld = glm::translate(p);
 			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START));
+			otherPlayer.baseOrientation = glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0));
 		} else {
+			std::cerr << "hit client 1 index set position" << std::endl;
 			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START);
-			player->orientation = glm::quat(glm::radians(180.0f), glm::vec3(0, 1, 0)); // turn player 2 around
+			player->position = p;
+			player->baseOrientation = glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)); // turn player 2 around
 			gridScene->toWorld = glm::translate(p);
 			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START));
 		}

@@ -8,11 +8,12 @@ class Player {
 public:
 	glm::vec3 position;
 	glm::quat orientation;
+	glm::quat baseOrientation;
 
 	Player() {}
 
 	glm::mat4 toWorld() {
-		return glm::translate(position);
+		return glm::translate(position) * glm::mat4_cast(baseOrientation);
 	}
 };
 

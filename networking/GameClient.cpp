@@ -100,6 +100,7 @@ void GameClient::ProcessMessage(yojimbo::Message * message) {
     switch (message->GetType()) {
 	case (int)GameMessageType::CLIENT_CONNECTED:
 		ProcessClientConnectedMessage((ClientConnectedMessage*) message);
+		break;
     case (int)GameMessageType::TEST:
         ProcessGameTestMessage((GameTestMessage*)message);
         break;

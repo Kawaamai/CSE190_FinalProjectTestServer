@@ -134,7 +134,7 @@ protected:
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 		}
 		//gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-		gMaterial = gPhysics->createMaterial(0.0f, 0.0f, 1.0f);
+		gMaterial = gPhysics->createMaterial(0.05f, 0.05f, 1.0f);
 
 		// testing
 		//PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
