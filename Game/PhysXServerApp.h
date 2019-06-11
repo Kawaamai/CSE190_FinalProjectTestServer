@@ -225,7 +225,7 @@ protected:
 	int CheckIfScored() {
 		PxSphereGeometry ballGeo;
 		mainballShape->getSphereGeometry(ballGeo);
-		ballGeo.radius += .02f;
+		ballGeo.radius += .03f;
 		bool p1BaseOverlapping = PxGeometryQuery::overlap(
 			ballGeo, mainball->getGlobalPose(),
 			p1BaseShape->getGeometry().box(), p1Base->getGlobalPose());
