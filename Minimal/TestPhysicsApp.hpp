@@ -380,8 +380,8 @@ protected:
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		//gridScene->renderCubeGrid(projection, view, eyePos, glm::vec3(0.3f));
-		gridScene->renderSphereGrid(projection, view, eyePos, glm::vec3(0.3f));
-		otherGridScene->renderSphereGrid(projection, view, eyePos, glm::vec3(0.3f));
+		gridScene->renderSphereGrid(projection, view, eyePos, glm::vec3(0.3f, 0.3f, 0.5f));
+		otherGridScene->renderSphereGrid(projection, view, eyePos, glm::vec3(0.5f, 0.3f, 0.3f));
 
 		// render the other playesr TODO:
 		renderOtherPlayer(projection, view, eyePos);
@@ -430,7 +430,7 @@ protected:
 					color = BasicColors::orangeColor;
 				}
 				if (isStatic) {
-					glm::mat4 toWorldscaled = toWorld * glm::scale(glm::vec3(0.5, 0.5, 0.5));
+					glm::mat4 toWorldscaled = toWorld * glm::scale(glm::vec3(1.0, 0.5, 0.5));
 					renderGeometryHolder(projection, view, h, toWorldscaled, eyePose, color, shadow);
 					glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 					renderGeometryHolder(projection, view, h, toWorld, eyePose, color, shadow);

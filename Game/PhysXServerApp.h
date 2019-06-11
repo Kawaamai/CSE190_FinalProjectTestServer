@@ -94,7 +94,7 @@ protected:
 				body->setLinearDamping(.0f);
 				body->setAngularDamping(.0f);
 				//PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-				PxRigidBodyExt::updateMassAndInertia(*body, 2.5f);
+				PxRigidBodyExt::updateMassAndInertia(*body, 3.5f);
 				gScene->addActor(*body);
 			}
 		}
@@ -102,7 +102,8 @@ protected:
 	}
 
 	void addBall(PxTransform tm = PxTransform(PxVec3(0.0))) {
-		PxMaterial* ballMaterial = gPhysics->createMaterial(0.0f, 0.0f, 1.0f);
+		PxMaterial* ballMaterial = gPhysics->createMaterial(0.0f, 0.005f, 1.0f);
+		ballMaterial->setFrictionCombineMode(PxCombineMode::eMIN);
 		PxShape* shape = gPhysics->createShape(PxSphereGeometry(.3f), *ballMaterial);
 		PxTransform localTm(PxVec3(0.0));
 		PxRigidDynamic* body = gPhysics->createRigidDynamic(tm.transform(localTm));
@@ -119,6 +120,7 @@ protected:
 		printf("init physics scene \n");
 
 		PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
+		sceneDesc.bounceThresholdVelocity = 0.f;
 		//sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
 		sceneDesc.gravity = PxVec3(0.0f, 0.0f, 0.0f); // No Gravity!!
 		gDispatcher = PxDefaultCpuDispatcherCreate(2);
@@ -134,7 +136,8 @@ protected:
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 		}
 		//gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-		gMaterial = gPhysics->createMaterial(0.05f, 0.05f, 1.0f);
+		gMaterial = gPhysics->createMaterial(0.2f, 0.2f, 1.0f);
+		gMaterial->setFrictionCombineMode(PxCombineMode::eMIN);
 
 		// testing
 		//PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
@@ -142,7 +145,7 @@ protected:
 
 		// TODO: determine if we need to use a different material for the walls
 		// create side walls
-		PxReal sideWallx = 0.25f, sideWally = 3.0f, sideWallz = 12.0f;
+		PxReal sideWallx = 0.5f, sideWally = 3.0f, sideWallz = 12.0f;
 		PxReal sideWallRadius = 7.24264f / 2.0f;
 		PxShape* sideWallShape = gPhysics->createShape(PxBoxGeometry(sideWallx / 2.0f, sideWally / 2.0f, sideWallz / 2.0f), *gMaterial);
 		for (PxU32 i = 0; i < 8; i++) {
@@ -166,12 +169,12 @@ protected:
 		}
 
 		// create end walls
-		PxShape * endWallShape = gPhysics->createShape(PxBoxGeometry(sideWallRadius, sideWallRadius, 0.1f), *gMaterial);
+		PxShape * endWallShape = gPhysics->createShape(PxBoxGeometry(sideWallRadius, sideWallRadius, sideWallx / 2.0f), *gMaterial);
 		for (int i = 0; i < 2; i++) {
 			int flip = 1;
 			if (i == 1)
 				flip = -1;
-			PxTransform endWallTm(PxVec3(0.0f, 0.0f, sideWallz / 2.0f * flip));
+			PxTransform endWallTm(PxVec3(0.0f, 0.0f, ((sideWallz / 2.0f) + (sideWallx / 2.0f)) * flip));
 			PxRigidStatic* endWallBody = gPhysics->createRigidStatic(endWallTm);
 			endWallBody->attachShape(*endWallShape);
 			gScene->addActor(*endWallBody);
