@@ -109,8 +109,13 @@ void GameClient::ProcessMessage(yojimbo::Message * message) {
 		break;
 	case (int)GameMessageType::RIGIDBODY_INFO:
 		ProcessRigidbodyMessage((RigidbodyMessage*)message);
+		break;
+	case (int)GameMessageType::UPDATE_SCORE:
+		ProcessUpdateScoreMessage((UpdateScoreMessage*)message);
+		break;
 	case (int)GameMessageType::PLAYER_UPDATE:
 		ProcessPlayerUpdateMessage((PlayerUpdateMessage*)message);
+		break;
     default:
         break;
     }
@@ -129,4 +134,6 @@ void GameClient::ProcessTransformMessage(TransformMessage * message) {
 void GameClient::ProcessRigidbodyMessage(RigidbodyMessage * message) {}
 
 void GameClient::ProcessPlayerUpdateMessage(PlayerUpdateMessage * message) {}
+
+void GameClient::ProcessUpdateScoreMessage(UpdateScoreMessage * message) {}
 

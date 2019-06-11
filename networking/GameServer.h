@@ -11,6 +11,8 @@ class GameServer {
 
 public:
 	GameServer(const yojimbo::Address& address);
+
+	void SendScores(int p1, int p2);
 	void Run();
 	void PhysicsRun();
 	void Update(float dt);

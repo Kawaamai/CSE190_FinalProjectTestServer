@@ -204,7 +204,7 @@ protected:
 		addBall();
 
 		// create the bases
-		PxShape* baseShape = gPhysics->createShape(PxBoxGeometry(PxVec3(.8f, .8f, .2f)), *gMaterial);
+		PxShape* baseShape = gPhysics->createShape(PxBoxGeometry(PxVec3(1.2f, 1.2f, .2f)), *gMaterial);
 		PxTransform p1BaseTm(defgame::PLAYER1_START + PxVec3(0.f, 0.f, 1.f));
 		p1Base = gPhysics->createRigidStatic(p1BaseTm);
 		p1Base->attachShape(*baseShape);
@@ -222,29 +222,32 @@ protected:
 			createDynamic(PxTransform(PxVec3(0,40,100)), PxSphereGeometry(10), PxVec3(0,-50,-100));
 	}
 
-	bool CheckIfScored() {
+	int CheckIfScored() {
+		PxSphereGeometry ballGeo;
+		mainballShape->getSphereGeometry(ballGeo);
+		ballGeo.radius += .02f;
 		bool p1BaseOverlapping = PxGeometryQuery::overlap(
-			mainballShape->getGeometry().sphere(), mainball->getGlobalPose(),
+			ballGeo, mainball->getGlobalPose(),
 			p1BaseShape->getGeometry().box(), p1Base->getGlobalPose());
 		if (p1BaseOverlapping) {
 			mainball->setGlobalPose(PxTransform(PxVec3(0.f), PxQuat(PxIdentity)));
 			mainball->setAngularVelocity(PxVec3(0.f));
 			mainball->setLinearVelocity(PxVec3(0.f));
 			std::cerr << "p2 scored!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-			return true;
+			return 2;
 		}
 		bool p2BaseOverlapping = PxGeometryQuery::overlap(
-			mainballShape->getGeometry().sphere(), mainball->getGlobalPose(),
+			ballGeo, mainball->getGlobalPose(),
 			p2BaseShape->getGeometry().box(), p2Base->getGlobalPose());
 		if (p2BaseOverlapping) {
 			mainball->setGlobalPose(PxTransform(PxVec3(0.f), PxQuat(PxIdentity)));
 			mainball->setAngularVelocity(PxVec3(0.f));
 			mainball->setLinearVelocity(PxVec3(0.f));
 			std::cerr << "p1 scored!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-			return true;
+			return 1;
 		}
 
-		return false;
+		return 0;
 	}
 
 	void UpdateSnapshot() {

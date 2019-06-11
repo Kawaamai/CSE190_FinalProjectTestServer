@@ -24,6 +24,7 @@ protected:
 	virtual void ProcessTransformMessage(TransformMessage* message);
 	virtual void ProcessRigidbodyMessage(RigidbodyMessage* message);
 	virtual void ProcessPlayerUpdateMessage(PlayerUpdateMessage* message);
+	virtual void ProcessUpdateScoreMessage(UpdateScoreMessage* message);
 
 	GameConnectionConfig m_connectionConfig;
 	ClientGameAdapter m_adapter;

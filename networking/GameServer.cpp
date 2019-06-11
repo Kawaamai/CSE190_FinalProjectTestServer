@@ -24,6 +24,19 @@ GameServer::GameServer(const yojimbo::Address& address) :
 	// ... load game ...
 	//m_scene.SetRunning(m_running);
 	m_scene.InitScene();
+	m_scene.scoreUpdateCallback = [&](int p1, int p2) {
+		SendScores(p1, p2);
+	};
+}
+
+void GameServer::SendScores(int p1, int p2) {
+	std::cerr << "Sending scores" << std::endl;
+	ForEachConnectedClient([&](int clientIdx) {
+		UpdateScoreMessage* message = (UpdateScoreMessage*)m_server.CreateMessage(clientIdx, (int)GameMessageType::UPDATE_SCORE);
+		message->p1Score = p1;
+		message->p2Score = p2;
+		m_server.SendMessage(clientIdx, (int)GameChannel::RELIABLE, message);
+	});
 }
 
 void GameServer::Run() {
@@ -142,6 +155,7 @@ void GameServer::ClientConnected(int clientIndex) {
 	ClientConnectedMessage* message = (ClientConnectedMessage*)m_server.CreateMessage(clientIndex, (int)GameMessageType::CLIENT_CONNECTED);
 	message->m_data = clientIndex;
 	m_server.SendMessage(clientIndex, (int)GameChannel::RELIABLE, message);
+	SendScores(m_scene.p1Score, m_scene.p2Score);
 }
 
 void GameServer::ClientDisconnected(int clientIndex) {

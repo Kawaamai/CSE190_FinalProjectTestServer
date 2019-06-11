@@ -7,6 +7,7 @@ enum class GameMessageType {
 	RIGIDBODY_INFO,
 	PLAYER_UPDATE,
 	SWEEP_FORCE_INPUT,
+	UPDATE_SCORE,
     TEST,
     COUNT
 };

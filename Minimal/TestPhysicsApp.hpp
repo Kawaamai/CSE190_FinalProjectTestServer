@@ -326,7 +326,6 @@ protected:
 		glCullFace(GL_BACK);
 		glDisable(GL_CULL_FACE);
 		returnToFbo();
-
 	}
 
 	void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, ovrEyeType eye, ovrPosef eyePose) override {
@@ -559,11 +558,11 @@ protected:
 			currentSource = (currentSource + 1) % NUM_SOURCES;
 		}
 
-		if (player->controllers->r_IndexTriggerUp() && fired.at(ovrHand_Right)) {
+		if (player->controllers->r_IndexTriggerUp() && (fired.at(ovrHand_Right) || (arrowing && arrowingHand == ovrHand_Right))) {
 			fired.at(ovrHand_Right) = false;
 			arrowing = false;
 		}
-		if (player->controllers->l_IndexTriggerUp() && fired.at(ovrHand_Left)) {
+		if (player->controllers->l_IndexTriggerUp() && (fired.at(ovrHand_Left) || (arrowing && arrowingHand == ovrHand_Left))) {
 			fired.at(ovrHand_Left) = false;
 			arrowing = false;
 		}
@@ -756,6 +755,12 @@ protected:
 		otherPlayer.rhandPosition = converter::NetVec3ToglmVec3(message->r_data.transform.position);
 		otherPlayer.lhandOrientation = converter::NetQuatToglmQuat(message->l_data.transform.orientation);
 		otherPlayer.rhandOrientation = converter::NetQuatToglmQuat(message->r_data.transform.orientation);
+	}
+
+	void ProcessUpdateScoreMessage(UpdateScoreMessage * message) override {
+		p1Score = message->p1Score;
+		p2Score = message->p2Score;
+		std::cerr << p1Score << " " << p2Score << std::endl;
 	}
 };
 

@@ -159,7 +159,7 @@ public:
 			x += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 		}
 
-		//glDisable(GL_CULL_FACE);
+		glDisable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -172,7 +172,7 @@ public:
 		GLfloat scale,
 		glm::vec3 color
 	) {
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		 // Activate corresponding render state	
@@ -215,7 +215,7 @@ public:
 			pos.x += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 		}
 
-		glDisable(GL_CULL_FACE);
+		//glDisable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);

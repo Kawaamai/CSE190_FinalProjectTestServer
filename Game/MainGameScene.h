@@ -7,9 +7,13 @@
 #include "GameConstants.h"
 #include "Player.h"
 #include <array>
+#include <functional>
 
 class MainGameScene : public PhysXServerApp {
 public:
+	int p1Score = 0, p2Score = 0;
+	std::function<void(int p1, int p2)> scoreUpdateCallback = 
+		[](int p1, int p2) {};
 	MainGameScene() {}
 	~MainGameScene() {
 		//cleanupPhysics(true);
@@ -27,7 +31,7 @@ public:
 
 	void Update() {
 		stepPhysics(true);
-		CheckIfScored();
+		ProcessScored(CheckIfScored());
 		UpdateSnapshot();
 	}
 
@@ -37,6 +41,17 @@ public:
 
 	void SetRunning(bool running) {
 		m_running = running;
+	}
+
+	void ProcessScored(int res) {
+		if (res == 0)
+			return;
+		if (res == 1) {
+			p1Score++;
+		} else if (res == 2) {
+			p2Score++;
+		}
+		scoreUpdateCallback(p1Score, p2Score);
 	}
 
 	void ProcessSweepForceInputMessage(SweepForceInputMessageData data) {
