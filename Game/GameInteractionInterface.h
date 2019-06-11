@@ -1,13 +1,19 @@
 #pragma once
 
-#include "PhysXServerApp.h"
+//#include "PhysXServerApp.h"
+#include "PxPhysicsAPI.h"
+#include "PxPhysics.h"
+#include "../snippets/snippetutils/SnippetUtils.h"
 #include <vector>
+#define MAX_NUM_ACTOR_SHAPES 128
+
+using namespace physx;
 
 namespace defgame {
 	const PxReal SWEEP_RADIUS = .2f;
 	const PxReal SWEEP_DIST = 3.0f;
-	//const PxReal SWEEP_FORCE = 40.0f;
-	const PxReal SWEEP_FORCE = 50.0f;
+	const PxReal SWEEP_FORCE = 40.0f;
+	//const PxReal SWEEP_FORCE = 20.0f;
 
 	const PxVec3 PLAYER1_START = PxVec3(0.0f, 0.0f, 4.75f);
 	const PxVec3 PLAYER2_START = PxVec3(0.0f, 0.0f, -4.75f);

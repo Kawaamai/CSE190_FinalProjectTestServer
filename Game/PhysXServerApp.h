@@ -4,11 +4,11 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include "GameInteractionInterface.h"
 
 using namespace physx;
 
 #define PVD_HOST "127.0.0.1"
-#define MAX_NUM_ACTOR_SHAPES 128
 
 class PhysXServerApp {
 public:
@@ -32,6 +32,11 @@ protected:
 	PxReal stackZ = -1.0f;
 
 	PxRigidDynamic* mainball;
+	PxShape* mainballShape;
+	PxRigidStatic* p1Base;
+	PxShape* p1BaseShape;
+	PxRigidStatic* p2Base;
+	PxShape* p2BaseShape;
 
 	PxU32 m_numActors = 0;
 	std::vector<PxRigidActor*> m_actors;
@@ -112,7 +117,9 @@ protected:
 		body->setLinearDamping(.0f);
 		gScene->addActor(*body);
 		mainball = body;
-		shape->release();
+		mainball->setName("mainball");
+		mainballShape = shape;
+		//shape->release();
 	}
 
 	virtual void initScene(bool interactive) {
@@ -196,8 +203,48 @@ protected:
 		createStack(PxTransform(PxVec3(0, 0, -3.0f)), 3, .2f); // small cubes instead
 		addBall();
 
+		// create the bases
+		PxShape* baseShape = gPhysics->createShape(PxBoxGeometry(PxVec3(.8f, .8f, .2f)), *gMaterial);
+		PxTransform p1BaseTm(defgame::PLAYER1_START + PxVec3(0.f, 0.f, 1.f));
+		p1Base = gPhysics->createRigidStatic(p1BaseTm);
+		p1Base->attachShape(*baseShape);
+		p1Base->setName("p1Base");
+		gScene->addActor(*p1Base);
+		PxTransform p2BaseTm(defgame::PLAYER2_START + PxVec3(0.f, 0.f, -1.f));
+		p2Base = gPhysics->createRigidStatic(p2BaseTm);
+		p2Base->attachShape(*baseShape);
+		p2Base->setName("p2Base");
+		gScene->addActor(*p2Base);
+		p1BaseShape = baseShape;
+		p2BaseShape = baseShape;
+
 		if(!interactive)
 			createDynamic(PxTransform(PxVec3(0,40,100)), PxSphereGeometry(10), PxVec3(0,-50,-100));
+	}
+
+	bool CheckIfScored() {
+		bool p1BaseOverlapping = PxGeometryQuery::overlap(
+			mainballShape->getGeometry().sphere(), mainball->getGlobalPose(),
+			p1BaseShape->getGeometry().box(), p1Base->getGlobalPose());
+		if (p1BaseOverlapping) {
+			mainball->setGlobalPose(PxTransform(PxVec3(0.f), PxQuat(PxIdentity)));
+			mainball->setAngularVelocity(PxVec3(0.f));
+			mainball->setLinearVelocity(PxVec3(0.f));
+			std::cerr << "p2 scored!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+			return true;
+		}
+		bool p2BaseOverlapping = PxGeometryQuery::overlap(
+			mainballShape->getGeometry().sphere(), mainball->getGlobalPose(),
+			p2BaseShape->getGeometry().box(), p2Base->getGlobalPose());
+		if (p2BaseOverlapping) {
+			mainball->setGlobalPose(PxTransform(PxVec3(0.f), PxQuat(PxIdentity)));
+			mainball->setAngularVelocity(PxVec3(0.f));
+			mainball->setLinearVelocity(PxVec3(0.f));
+			std::cerr << "p1 scored!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+			return true;
+		}
+
+		return false;
 	}
 
 	void UpdateSnapshot() {

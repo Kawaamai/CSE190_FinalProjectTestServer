@@ -133,6 +133,9 @@ private:
 	std::unique_ptr<BallModel> ballModel;
 	std::unique_ptr<HandModel> handModel;
 
+	// scoring
+	unsigned int p1Score = 0, p2Score = 0;
+
 	// debug
 	std::unique_ptr<TexturedPlane> plane;
 
@@ -155,7 +158,7 @@ protected:
 		skybox = std::make_unique<Skybox>("../Minimal/space_skybox");
 		skybox->toWorld = glm::scale(glm::vec3(15.0f)) * glm::rotate(90.0f, glm::vec3(0, 1, 0));
 		skyboxShaderId = LoadShaders("../Minimal/skybox.vert", "../Minimal/skybox.frag");
-		uiFont = std::make_unique<TextRenderer>("../Minimal/fonts/arial.ttf", 24);
+		uiFont = std::make_unique<TextRenderer>("../Minimal/fonts/arial.ttf", 128);
 
 		headModel = std::make_unique<HeadModel>();
 		ballModel = std::make_unique<BallModel>();
@@ -340,21 +343,6 @@ protected:
 		//sphereScene->render(projection, view);
 		renderPxScene(projection, view, eyePose);
 
-		//std::string scoreDisplayText = "Score: 0";
-		//std::string gameStartText = "Right index trigger to start";
-
-		// left hand text
-		//if (player->controllers->gethandStatus(ovrHand_Left)) {
-		//	//glm::mat4 handPosTrans = glm::translate(controllers->getHandPosition(ovrHand_Left));
-		//	glm::mat4 handPosTrans = glm::translate(player->getHandPosition(ovrHand_Left));
-		//	glm::mat4 handRotTrans = glm::mat4_cast(player->controllers->getHandRotation(ovrHand_Left));
-		//	//                                                                                        (right of hand, above hand, behind hand)
-		//	glm::mat4 gameStartTextTransform = handPosTrans * (handRotTrans * glm::translate(glm::vec3(0.03f, 0.015f, 0.1f))) * glm::rotate(glm::radians(70.0f), glm::vec3(0, 1, 0));
-		//	//                                                                                    (right of hand, above hand, behind hand)
-		//	glm::mat4 scoreTextTransform = handPosTrans * (handRotTrans * glm::translate(glm::vec3(0.03f, -0.005f, 0.1f))) * glm::rotate(glm::radians(70.0f), glm::vec3(0, 1, 0));
-		//	uiFont->renderText(projection * glm::inverse(headPose) * gameStartTextTransform, gameStartText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
-		//	uiFont->renderText(projection * glm::inverse(headPose) * scoreTextTransform, scoreDisplayText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
-		//}
 
 		glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
 		if (player->controllers->r_IndexTriggerPressed() && !fired.at(ovrHand_Right) && (!arrowing || arrowingHand == ovrHand_Right)) {
@@ -395,6 +383,25 @@ protected:
 		//playerHeadOrientation = ovr::toGlm(eyePose.Orientation);
 		//headModel->render(projection, view, eyePos, sceneLight->lightPos, );
 
+		// game score
+		std::string scoreDisplayText = std::to_string(p2Score) + " : " + std::to_string(p1Score);
+		glm::mat4 scoreDisplayTm = glm::translate(glm::vec3(3.2f, 0, 0)) * glm::rotate(glm::radians(-90.0f), glm::vec3(0, 1, 0));
+		//glm::mat4 scoreDisplayTm = glm::mat4(1.0f);
+		uiFont->renderText(projection * view * scoreDisplayTm, scoreDisplayText, glm::vec3(0.0f), .005f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+		// left hand text
+		//if (player->controllers->gethandStatus(ovrHand_Left)) {
+		////	//glm::mat4 handPosTrans = glm::translate(controllers->getHandPosition(ovrHand_Left));
+		//	glm::mat4 handPosTrans = glm::translate(player->getHandPosition(ovrHand_Left));
+		//	glm::mat4 handRotTrans = glm::mat4_cast(player->controllers->getHandRotation(ovrHand_Left));
+		////	//                                                                                        (right of hand, above hand, behind hand)
+		////	glm::mat4 gameStartTextTransform = handPosTrans * (handRotTrans * glm::translate(glm::vec3(0.03f, 0.015f, 0.1f))) * glm::rotate(glm::radians(70.0f), glm::vec3(0, 1, 0));
+		////	//                                                                                    (right of hand, above hand, behind hand)
+		//	glm::mat4 scoreTextTransform = handPosTrans * (handRotTrans * glm::translate(glm::vec3(0.03f, -0.005f, 0.1f))) * glm::rotate(glm::radians(70.0f), glm::vec3(0, 1, 0));
+		////	uiFont->renderText(projection * glm::inverse(headPose) * gameStartTextTransform, gameStartText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
+		//	uiFont->renderText(projection * view * scoreTextTransform, scoreDisplayText, glm::vec3(0.0f), .001f, glm::vec3(1.0f, 0.2f, 0.2f));
+		//}
+
 		// debug
 		//plane->draw(projection, view, depthMap);
 	}
@@ -430,17 +437,24 @@ protected:
 				//if (sleeping) {
 				//	// TODO: change color
 				//}
+				//glm::vec3 color = BasicColors::blueColor;
+				//if (actors[i]->getType() == PxActorTypeFlag::eRIGID_STATIC) {
+				//	color = BasicColors::orangeColor;
+				//}
 				glm::vec3 color = BasicColors::blueColor;
-				if (actors[i]->getType() == PxActorTypeFlag::eRIGID_STATIC) {
-					color = BasicColors::orangeColor;
-				}
 				if (isStatic) {
-					glm::mat4 toWorldscaled = toWorld * glm::scale(glm::vec3(1.0, 0.5, 0.5));
-					renderGeometryHolder(projection, view, h, toWorldscaled, eyePose, color, shadow);
-					glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-					renderGeometryHolder(projection, view, h, toWorld, eyePose, color, shadow);
-					glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+					if (actors[i]->getName() == "p1Base" || actors[i]->getName() == "p2Base") {
+						color = glm::vec3(1.f);
+						renderGeometryHolder(projection, view, h, toWorld, eyePose, color, shadow);
+					} else {
+						glm::mat4 toWorldscaled = toWorld * glm::scale(glm::vec3(1.0, 0.5, 0.5));
+						renderGeometryHolder(projection, view, h, toWorldscaled, eyePose, color, shadow);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+						renderGeometryHolder(projection, view, h, toWorld, eyePose, color, shadow);
+						glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					}
 				} else {
+					color = BasicColors::orangeColor;
 					renderGeometryHolder(projection, view, h, toWorld, eyePose, color, shadow);
 				}
 			}
@@ -684,6 +698,7 @@ protected:
 	void ProcessClientConnectedMessage(ClientConnectedMessage* message) override {
 		if (m_client.GetClientIndex() == 0) {
 			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START);
+			//glm::vec3 p = glm::vec3(0);
 			player->position = p;
 			gridScene->toWorld = glm::translate(p);
 			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START));

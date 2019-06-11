@@ -27,6 +27,7 @@ public:
 
 	void Update() {
 		stepPhysics(true);
+		CheckIfScored();
 		UpdateSnapshot();
 	}
 
