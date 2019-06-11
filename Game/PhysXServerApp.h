@@ -99,7 +99,7 @@ protected:
 				body->setLinearDamping(.0f);
 				body->setAngularDamping(.0f);
 				//PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-				PxRigidBodyExt::updateMassAndInertia(*body, 4.f);
+				PxRigidBodyExt::updateMassAndInertia(*body, 4.2f);
 				gScene->addActor(*body);
 			}
 		}
@@ -113,7 +113,7 @@ protected:
 		PxTransform localTm(PxVec3(0.0));
 		PxRigidDynamic* body = gPhysics->createRigidDynamic(tm.transform(localTm));
 		body->attachShape(*shape);
-		PxRigidBodyExt::updateMassAndInertia(*body, 3.f);
+		PxRigidBodyExt::updateMassAndInertia(*body, 3.2f);
 		body->setLinearDamping(.0f);
 		gScene->addActor(*body);
 		mainball = body;
