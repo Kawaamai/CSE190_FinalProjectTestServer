@@ -151,7 +151,8 @@ int main(int argc, char **argv) {
 		}
 		yojimbo_log_level(YOJIMBO_LOG_LEVEL_INFO);
 
-		yojimbo::Address serverAddress = yojimbo::Address("127.0.0.1", ServerPort);
+		//yojimbo::Address serverAddress = yojimbo::Address("127.0.0.1", ServerPort);
+		yojimbo::Address serverAddress = yojimbo::Address("128.54.70.69", ServerPort);
 		{ // need this to properly call yojimbo::BaseClient desctructor
 			//TestPhysicsApp client(serverAddress);
 			//result = ExampleApp().run();

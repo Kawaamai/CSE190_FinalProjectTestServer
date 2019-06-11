@@ -12,6 +12,7 @@
 
 # compiled stuff
 *.obj
+!Models/*.obj
 vc141.idp
 vc141.idb
 vc141.pdb

@@ -14,7 +14,8 @@ int main() {
 
 	yojimbo_log_level(YOJIMBO_LOG_LEVEL_INFO);
 
-	GameServer server(yojimbo::Address("127.0.0.1", ServerPort));
+	//GameServer server(yojimbo::Address("127.0.0.1", ServerPort));
+	GameServer server(yojimbo::Address("128.54.70.69", ServerPort));
 
 	server.Run();
 
