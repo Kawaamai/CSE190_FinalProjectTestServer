@@ -142,6 +142,11 @@ public:
 		return ((currInputState.Buttons & ovrButton_B) &&
 			((prevInputState.Buttons & ovrButton_B) == 0));
 	}
+	bool r_BButtonPressed() {
+		if (!gethandStatus(ovrHand_Right))
+			return false;
+		return currInputState.Buttons & ovrButton_B;
+	}
 	bool l_XButtonDown() {
 		if (!gethandStatus(ovrHand_Left))
 			return false;
@@ -153,6 +158,11 @@ public:
 			return false;
 		return ((currInputState.Buttons & ovrButton_Y) &&
 			((prevInputState.Buttons & ovrButton_Y) == 0));
+	}
+	bool l_YButtonPressed() {
+		if (!gethandStatus(ovrHand_Left))
+			return false;
+		return currInputState.Buttons & ovrButton_Y;
 	}
 	bool r_HandTriggerUp() {
 		if (!gethandStatus(ovrHand_Right))

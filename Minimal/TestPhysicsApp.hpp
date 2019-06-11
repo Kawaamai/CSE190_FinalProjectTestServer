@@ -111,6 +111,11 @@ private:
 	bool grabbing = false;
 	ovrHandType grabbingHand = ovrHand_Right;
 
+	// arrowing
+	std::array<bool, 2> fired;
+	bool arrowing = false;
+	ovrHandType arrowingHand = ovrHand_Right;
+
 	PlayerServer otherPlayer;
 
 	// sphere grid
@@ -352,7 +357,7 @@ protected:
 		//}
 
 		glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
-		if (player->controllers->r_IndexTriggerPressed()) {
+		if (player->controllers->r_IndexTriggerPressed() && !fired.at(ovrHand_Right) && (!arrowing || arrowingHand == ovrHand_Right)) {
 			glm::vec3 dir = glm::normalize(player->getHandPosition(ovrHand_Right) - controllerInitPressPos.at(ovrHand_Right));
 			float dist = glm::distance(player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right)) * defgame::SWEEP_DIST;
 			glm::vec3 pos = controllerInitPressPos.at(ovrHand_Right) + (dir * dist);
@@ -362,7 +367,7 @@ protected:
 			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePos, glm::vec3(1.0f, 0.0f, 0.0f));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
-		if (player->controllers->l_IndexTriggerPressed()) {
+		if (player->controllers->l_IndexTriggerPressed() && !fired.at(ovrHand_Left) && (!arrowing || arrowingHand == ovrHand_Left)) {
 			glm::vec3 dir = glm::normalize(player->getHandPosition(ovrHand_Left) - controllerInitPressPos.at(ovrHand_Left));
 			float dist = glm::distance(player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left)) * defgame::SWEEP_DIST;
 			glm::vec3 pos = controllerInitPressPos.at(ovrHand_Left) + (dir * dist);
@@ -481,28 +486,80 @@ protected:
 			message->m_data.sweepRadius = defgame::SWEEP_RADIUS;
 			message->m_data.sweepDistance = dist;
 			m_client.SendMessage((int)GameChannel::RELIABLE, message);
+			//m_client.SendMessage((int)GameChannel::UNRELIABLE, message);
 		}
 	}
 
 	void handleInput() override {
-		if (player->controllers->r_IndexTriggerDown()) {
+		if (player->controllers->r_IndexTriggerDown() && !arrowing) {
 			controllerInitPressPos.at(ovrHand_Right) = player->getHandPosition(ovrHand_Right);
 		}
-		if (player->controllers->l_IndexTriggerDown()) {
+		if (player->controllers->l_IndexTriggerDown() && !arrowing) {
 			controllerInitPressPos.at(ovrHand_Left) = player->getHandPosition(ovrHand_Left);
 		}
-		if (player->controllers->r_IndexTriggerUp()) {
+
+		// arrowing
+		if (player->controllers->r_IndexTriggerPressed() && player->controllers->l_YButtonDown() && (!arrowing || arrowingHand == ovrHand_Right)) {
+			controllerInitPressPos.at(ovrHand_Right) = player->getHandPosition(ovrHand_Left);
+			arrowing = true;
+			arrowingHand = ovrHand_Right;
+			fired.at(ovrHand_Right) = false;
+		}
+		if (player->controllers->l_IndexTriggerPressed() && player->controllers->r_BButtonDown() && (!arrowing || arrowingHand == ovrHand_Left)) {
+			controllerInitPressPos.at(ovrHand_Left) = player->getHandPosition(ovrHand_Right);
+			arrowing = true;
+			arrowingHand = ovrHand_Left;
+			fired.at(ovrHand_Left) = false;
+		}
+		if (player->controllers->r_IndexTriggerPressed() && player->controllers->l_YButtonPressed() && arrowing) {
+			controllerInitPressPos.at(ovrHand_Right) = player->getHandPosition(ovrHand_Left);
+		}
+		if (player->controllers->l_IndexTriggerPressed() && player->controllers->r_BButtonPressed() && arrowing) {
+			controllerInitPressPos.at(ovrHand_Left) = player->getHandPosition(ovrHand_Right);
+		}
+		// arrowing fire
+		if (player->controllers->r_IndexTriggerPressed() && player->controllers->l_YButtonUp() && arrowingHand == ovrHand_Right) {
+			SendSweepForce(ovrHand_Right);
+			fired.at(ovrHand_Right) = true;
+			alSourcePlay(source[currentSource]);
+			currentSource = (currentSource + 1) % NUM_SOURCES;
+		}
+		if (player->controllers->l_IndexTriggerPressed() && player->controllers->r_BButtonUp() && arrowingHand == ovrHand_Left) {
+			SendSweepForce(ovrHand_Left);
+			fired.at(ovrHand_Left) = true;
+			alSourcePlay(source[currentSource]);
+			currentSource = (currentSource + 1) % NUM_SOURCES;
+		}
+
+		// not arrowing
+		if (player->controllers->r_IndexTriggerUp() && !fired.at(ovrHand_Right) && !arrowing) {
 			SendSweepForce(ovrHand_Right);
 			//alSource3f(source[currentSource], AL_POSITION, controllerInitPressPos.at(ovrHand_Right).x, controllerInitPressPos.at(ovrHand_Right).y, controllerInitPressPos.at(ovrHand_Right).z);
 			alSourcePlay(source[currentSource]);
 			currentSource = (currentSource + 1) % NUM_SOURCES;
 		}
-		if (player->controllers->l_IndexTriggerUp()) {
+		if (player->controllers->l_IndexTriggerUp() && !fired.at(ovrHand_Left) && !arrowing) {
 			SendSweepForce(ovrHand_Left);
 			//alSource3f(source[currentSource], AL_POSITION, controllerInitPressPos.at(ovrHand_Left).x, controllerInitPressPos.at(ovrHand_Left).y, controllerInitPressPos.at(ovrHand_Left).z);
 			alSourcePlay(source[currentSource]);
 			currentSource = (currentSource + 1) % NUM_SOURCES;
 		}
+
+		if (player->controllers->r_IndexTriggerUp() && fired.at(ovrHand_Right)) {
+			fired.at(ovrHand_Right) = false;
+			arrowing = false;
+		}
+		if (player->controllers->l_IndexTriggerUp() && fired.at(ovrHand_Left)) {
+			fired.at(ovrHand_Left) = false;
+			arrowing = false;
+		}
+
+		//if (player->controllers->r_IndexTriggerPressed()) {
+		//	SendSweepForce(ovrHand_Right);
+		//}
+		//if (player->controllers->l_IndexTriggerPressed()) {
+		//	SendSweepForce(ovrHand_Left);
+		//}
 
 		if (player->controllers->r_HandTriggerDown()) {
 			if (gridScene->nearGridPoint(player->getHandPosition(ovrHand_Right))) {
@@ -515,8 +572,6 @@ protected:
 				grabbing = true;
 				grabbingHand = ovrHand_Left;
 			}
-	glm::mat4 lhandLocal = glm::rotate(95.0f, glm::vec3(-1, 0, 0));
-	glm::mat4 rhandLocal = glm::rotate(-85.0f, glm::vec3(1, 0, 0));
 		}
 		if (player->controllers->r_HandTriggerUp() && grabbingHand == ovrHand_Right) {
 			grabbing = false;

@@ -94,7 +94,7 @@ protected:
 				body->setLinearDamping(.0f);
 				body->setAngularDamping(.0f);
 				//PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-				PxRigidBodyExt::updateMassAndInertia(*body, 3.5f);
+				PxRigidBodyExt::updateMassAndInertia(*body, 4.f);
 				gScene->addActor(*body);
 			}
 		}
@@ -102,15 +102,14 @@ protected:
 	}
 
 	void addBall(PxTransform tm = PxTransform(PxVec3(0.0))) {
-		PxMaterial* ballMaterial = gPhysics->createMaterial(0.0f, 0.005f, 1.0f);
+		PxMaterial* ballMaterial = gPhysics->createMaterial(0.0f, 0.05f, 1.0f);
 		ballMaterial->setFrictionCombineMode(PxCombineMode::eMIN);
 		PxShape* shape = gPhysics->createShape(PxSphereGeometry(.3f), *ballMaterial);
 		PxTransform localTm(PxVec3(0.0));
 		PxRigidDynamic* body = gPhysics->createRigidDynamic(tm.transform(localTm));
 		body->attachShape(*shape);
-		PxRigidBodyExt::updateMassAndInertia(*body, 2.4f);
+		PxRigidBodyExt::updateMassAndInertia(*body, 3.f);
 		body->setLinearDamping(.0f);
-		body->setAngularDamping(.0f);
 		gScene->addActor(*body);
 		mainball = body;
 		shape->release();
