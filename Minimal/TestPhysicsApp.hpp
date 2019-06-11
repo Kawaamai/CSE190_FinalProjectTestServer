@@ -349,7 +349,7 @@ protected:
 			float dist = glm::distance(player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right)) * defgame::SWEEP_DIST;
 			glm::vec3 pos = controllerInitPressPos.at(ovrHand_Right) + (dir * dist);
 			//basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Right), controllerInitPressPos.at(ovrHand_Right), eyePos, glm::vec3(1, 0, 1));
-			basicShapeRenderer->renderLine(projection, view, pos, controllerInitPressPos.at(ovrHand_Right), eyePos, glm::vec3(1, 0, 1));
+			basicShapeRenderer->renderLine(projection, view, pos, controllerInitPressPos.at(ovrHand_Right), eyePos, glm::vec3(1, 1, 1));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePos, glm::vec3(1.0f, 0.0f, 0.0f));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -359,7 +359,7 @@ protected:
 			float dist = glm::distance(player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left)) * defgame::SWEEP_DIST;
 			glm::vec3 pos = controllerInitPressPos.at(ovrHand_Left) + (dir * dist);
 			//basicShapeRenderer->renderLine(projection, view, player->getHandPosition(ovrHand_Left), controllerInitPressPos.at(ovrHand_Left), eyePos, glm::vec3(1, 0, 1));
-			basicShapeRenderer->renderLine(projection, view, pos, controllerInitPressPos.at(ovrHand_Left), eyePos, glm::vec3(1, 0, 1));
+			basicShapeRenderer->renderLine(projection, view, pos, controllerInitPressPos.at(ovrHand_Left), eyePos, glm::vec3(1, 0, 0));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			basicShapeRenderer->renderSphere(projection, view, glm::translate(pos) * glm::scale(glm::vec3(defgame::SWEEP_RADIUS) / 2.0f), eyePos, glm::vec3(1.0f, 0.0f, 0.0f));
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
