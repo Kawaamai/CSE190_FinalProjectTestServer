@@ -139,6 +139,9 @@ void GameServer::Stop() {
 
 void GameServer::ClientConnected(int clientIndex) {
 	std::cout << "client " << clientIndex << " connected" << std::endl;
+	ClientConnectedMessage* message = (ClientConnectedMessage*)m_server.CreateMessage(clientIndex, (int)GameMessageType::CLIENT_CONNECTED);
+	message->m_data = clientIndex;
+	m_server.SendMessage(clientIndex, (int)GameChannel::RELIABLE, message);
 }
 
 void GameServer::ClientDisconnected(int clientIndex) {

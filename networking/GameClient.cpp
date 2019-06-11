@@ -98,6 +98,8 @@ void GameClient::ProcessMessages() {
 
 void GameClient::ProcessMessage(yojimbo::Message * message) {
     switch (message->GetType()) {
+	case (int)GameMessageType::CLIENT_CONNECTED:
+		ProcessClientConnectedMessage((ClientConnectedMessage*) message);
     case (int)GameMessageType::TEST:
         ProcessGameTestMessage((GameTestMessage*)message);
         break;
@@ -112,6 +114,8 @@ void GameClient::ProcessMessage(yojimbo::Message * message) {
         break;
     }
 }
+
+void GameClient::ProcessClientConnectedMessage(ClientConnectedMessage * message) {}
 
 void GameClient::ProcessGameTestMessage(GameTestMessage * message) {
 	std::cout << "Test message received from server with data\n" << message->m_data << std::endl;

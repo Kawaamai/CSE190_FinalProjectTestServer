@@ -8,6 +8,7 @@
 
 // the message factory
 YOJIMBO_MESSAGE_FACTORY_START(GameMessageFactory, (int)GameMessageType::COUNT);
+	YOJIMBO_DECLARE_MESSAGE_TYPE((int)GameMessageType::CLIENT_CONNECTED, ClientConnectedMessage);
 	YOJIMBO_DECLARE_MESSAGE_TYPE((int)GameMessageType::TEST, GameTestMessage);
 	YOJIMBO_DECLARE_MESSAGE_TYPE((int)GameMessageType::TRANSFORM_INFO, TransformMessage);
 	YOJIMBO_DECLARE_MESSAGE_TYPE((int)GameMessageType::RIGIDBODY_INFO, RigidbodyMessage);

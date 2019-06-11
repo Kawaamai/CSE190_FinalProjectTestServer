@@ -17,3 +17,5 @@ public:
 
     YOJIMBO_VIRTUAL_SERIALIZE_FUNCTIONS();
 };
+
+typedef GameTestMessage ClientConnectedMessage;

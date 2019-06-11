@@ -151,20 +151,6 @@ protected:
 		skybox->toWorld = glm::scale(glm::vec3(15.0f)) * glm::rotate(90.0f, glm::vec3(0, 1, 0));
 		skyboxShaderId = LoadShaders("../Minimal/skybox.vert", "../Minimal/skybox.frag");
 		uiFont = std::make_unique<TextRenderer>("../Minimal/fonts/arial.ttf", 24);
-		if (m_client.GetClientIndex() == 0) {
-			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START);
-			player->position = p;
-			gridScene->toWorld = glm::translate(p);
-			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START));
-		} else {
-			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START);
-			player->position = p;
-			player->orientation = glm::quat(glm::radians(180.0f), glm::vec3(0, 1, 0)); // turn player 2 around
-			gridScene->toWorld = glm::translate(p);
-			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START));
-		}
-		// shift up a bit
-		player->position += glm::vec3(0.0f, 0.5f, 0.0f);
 
 		headModel = std::make_unique<HeadModel>();
 		ballModel = std::make_unique<BallModel>();
@@ -637,6 +623,23 @@ protected:
 		message->l_data.transform.orientation = converter::glmQuatToNetQuat(player->controllers->getHandRotation(ovrHand_Left));
 		message->r_data.transform.orientation = converter::glmQuatToNetQuat(player->controllers->getHandRotation(ovrHand_Right));
 		m_client.SendMessage((int)GameChannel::UNRELIABLE, message);
+	}
+
+	void ProcessClientConnectedMessage(ClientConnectedMessage* message) override {
+		if (m_client.GetClientIndex() == 0) {
+			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START);
+			player->position = p;
+			gridScene->toWorld = glm::translate(p);
+			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START));
+		} else {
+			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START);
+			player->orientation = glm::quat(glm::radians(180.0f), glm::vec3(0, 1, 0)); // turn player 2 around
+			gridScene->toWorld = glm::translate(p);
+			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START));
+		}
+		std::cerr << m_client.GetClientIndex() << std::endl;
+		// shift up a bit
+		player->position += glm::vec3(0.0f, 0.5f, 0.0f);
 	}
 
 	void ProcessTransformMessage(TransformMessage * message) override {

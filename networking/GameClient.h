@@ -19,6 +19,7 @@ protected:
 	// message processing
 	void ProcessMessages();
 	void ProcessMessage(yojimbo::Message* message);
+	virtual void ProcessClientConnectedMessage(ClientConnectedMessage* message);
 	virtual void ProcessGameTestMessage(GameTestMessage* message);
 	virtual void ProcessTransformMessage(TransformMessage* message);
 	virtual void ProcessRigidbodyMessage(RigidbodyMessage* message);
