@@ -94,7 +94,7 @@ protected:
 				body->setLinearDamping(.0f);
 				body->setAngularDamping(.0f);
 				//PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-				PxRigidBodyExt::updateMassAndInertia(*body, 2.0f);
+				PxRigidBodyExt::updateMassAndInertia(*body, 2.5f);
 				gScene->addActor(*body);
 			}
 		}
@@ -107,7 +107,7 @@ protected:
 		PxTransform localTm(PxVec3(0.0));
 		PxRigidDynamic* body = gPhysics->createRigidDynamic(tm.transform(localTm));
 		body->attachShape(*shape);
-		PxRigidBodyExt::updateMassAndInertia(*body, 2.5f);
+		PxRigidBodyExt::updateMassAndInertia(*body, 2.4f);
 		body->setLinearDamping(.0f);
 		body->setAngularDamping(.0f);
 		gScene->addActor(*body);
@@ -134,7 +134,7 @@ protected:
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 		}
 		//gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-		gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 1.0f);
+		gMaterial = gPhysics->createMaterial(0.0f, 0.0f, 1.0f);
 
 		// testing
 		//PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
