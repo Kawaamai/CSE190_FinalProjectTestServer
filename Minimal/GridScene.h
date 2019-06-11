@@ -25,6 +25,7 @@
 #pragma warning( default : 4068 4244 4267 4065)
 
 #include "oglShaderAttributes.h"
+#include "ShadowRenderingHeader.h"
 
 class GridScene {
 public:
@@ -43,6 +44,10 @@ public:
 		const glm::mat4& view,
 		const glm::vec3& eyePos,
 		glm::vec3 color);
+	void shadowrenderSphereGrid(const glm::mat4& projection,
+		const glm::mat4& view);
+	void shadowrenderCubeGrid(const glm::mat4& projection,
+		const glm::mat4& view);
 
 	bool nearGridPoint(const glm::vec3 p);
 
@@ -63,5 +68,7 @@ private:
 	int instanceCount;
 	std::vector<glm::mat4> instancePositions;
 	std::vector<std::vector<glm::vec3>> positions;
+
+	Shader shadowShader = Shader("../Minimal/osimpleDepthMapShader.vert", "../Minimal/simpleDepthMapShader.frag");
 };
 

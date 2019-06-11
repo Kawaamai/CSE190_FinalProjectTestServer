@@ -35,49 +35,14 @@ TexturedPlane::~TexturedPlane()
 
 void TexturedPlane::draw(const glm::mat4 & projection, const glm::mat4 & view, GLuint textureId, const glm::vec3 eyePos)
 {
-	switch (lightingMode) {
-	case LIGHTING_FALLOFF: {
-		lightingFalloffShader.use();
-		lightingFalloffShader.setMat4("Projection", projection);
-		lightingFalloffShader.setMat4("View", view);
-		lightingFalloffShader.setMat4("Model", toWorld);
-		lightingFalloffShader.setVec3("eyePos", eyePos);
-		//lightingFalloffShader.setVec3("Normal", glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.use();
+	shader.setMat4("Projection", projection);
+	shader.setMat4("View", view);
+	shader.setMat4("Model", toWorld);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		lightingFalloffShader.setInt("tex", 0);
-		break;
-	}
-
-	case VIGNETTE: {
-		glm::vec3 P0 = glm::vec3(toWorld * glm::vec4(PlaneData::lightPos, 1.0f));
-
-		vignetteShader.use();
-		vignetteShader.setMat4("Projection", projection);
-		vignetteShader.setMat4("View", view);
-		vignetteShader.setMat4("Model", toWorld);
-		vignetteShader.setVec3("lightPos", P0);
-		vignetteShader.setVec3("eyePos", eyePos);
-		//vignetteShader.setVec3("Normal", glm::vec3(0.0f, 1.0f, 0.0f));
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		vignetteShader.setInt("tex", 0);
-		break;
-	}
-
-	default: {
-		shader.use();
-		shader.setMat4("Projection", projection);
-		shader.setMat4("View", view);
-		shader.setMat4("Model", toWorld);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		shader.setInt("tex", 0);
-	}
-	}
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	shader.setInt("tex", 0);
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -94,7 +59,7 @@ void TexturedPlane::draw(const glm::mat4 & projection, const glm::mat4 & view, G
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	shader.setInt("tex", 0);
+	//shader.setInt("tex", 0);
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

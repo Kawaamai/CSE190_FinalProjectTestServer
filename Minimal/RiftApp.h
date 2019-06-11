@@ -148,9 +148,6 @@ protected:
 			FAIL("Could not create mirror texture");
 		}
 		glGenFramebuffers(1, &_mirrorFbo);
-
-		// FIXME: find a better place for this
-		//av = std::make_unique<AvatarHandler>(_session);
 	}
 
 	void postInit() override {
@@ -168,6 +165,9 @@ protected:
 	}
 
 	void draw() final override {
+		// TODO: do prerender here
+		prerenderScene();
+
 		ovrPosef eyePoses[2];
 		ovr_GetEyePoses(_session, frame, true, _viewScaleDesc.HmdToEyePose, eyePoses, &_sceneLayer.SensorSampleTime);
 
@@ -235,4 +235,5 @@ protected:
 	virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, ovrEyeType eye, ovrPosef eyePose) = 0;
 	//virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, const ovrPosef camera) = 0;
 	//virtual void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, const glm::vec3 & headPos) = 0;
+	virtual void prerenderScene() {};
 };

@@ -32,6 +32,7 @@
 #include "HeadModel.h"
 #include "BallModel.h"
 #include "HandModel.h"
+#include "TexturedPlane.h"
 
 #include <vector>
 #include <array>
@@ -83,6 +84,18 @@ static inline ALenum to_al_format(short channels, short samples) {
 	}
 }
 
+
+#include "ShadowRenderingHeader.h"
+// Stuff for shadow mapping
+GLuint depthMapFbo;
+const unsigned int SHADOW_WIDTH = 2048 * 2, SHADOW_HEIGHT = 2048 * 2;
+float near_plane = .001f, far_plane = 12.0f;
+GLuint depthMap;
+glm::mat4 lightProjection = glm::ortho(-9.0f, 9.0f, -9.0f, 9.0f, near_plane, far_plane);
+glm::mat4 lightView = glm::lookAt(-1.5f * glm::vec3(-3, -1, 1), // taken from oglBlinnPhongColor.frag's light direction
+	glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
 // An example application that renders a simple cube
 class TestPhysicsApp : public RiftApp, public GameClient {
 private:
@@ -102,7 +115,7 @@ private:
 
 	// sphere grid
 	//std::unique_ptr<TestPhysicsScene> sphereScene;
-	std::unique_ptr<GridScene> gridScene;
+	std::unique_ptr<GridScene> gridScene, otherGridScene;
 	std::unique_ptr<BasicColorGeometryScene> basicShapeRenderer;
 	std::unique_ptr<Skybox> skybox;
 	GLuint skyboxShaderId;
@@ -114,6 +127,9 @@ private:
 	std::unique_ptr<HeadModel> headModel;
 	std::unique_ptr<BallModel> ballModel;
 	std::unique_ptr<HandModel> handModel;
+
+	// debug
+	std::unique_ptr<TexturedPlane> plane;
 
 public:
 	TestPhysicsApp(const yojimbo::Address& serverAddress) : GameClient(serverAddress) {}
@@ -129,6 +145,7 @@ protected:
 		player = std::make_unique<PlayerClient>(_session, sceneLight);
 		player->initPlayerGL();
 		gridScene = std::make_unique<GridScene>(7, 7, .1f, 0.45f, sceneLight);
+		otherGridScene = std::make_unique<GridScene>(7, 7, .1f, 0.45f, sceneLight);
 		basicShapeRenderer = std::make_unique<BasicColorGeometryScene>(sceneLight);
 		skybox = std::make_unique<Skybox>("../Minimal/space_skybox");
 		skybox->toWorld = glm::scale(glm::vec3(15.0f)) * glm::rotate(90.0f, glm::vec3(0, 1, 0));
@@ -138,15 +155,39 @@ protected:
 			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START);
 			player->position = p;
 			gridScene->toWorld = glm::translate(p);
+			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START));
 		} else {
 			glm::vec3 p = converter::PhysXVec3ToglmVec3(defgame::PLAYER2_START);
 			player->position = p;
+			player->orientation = glm::quat(glm::radians(180.0f), glm::vec3(0, 1, 0)); // turn player 2 around
 			gridScene->toWorld = glm::translate(p);
+			otherGridScene->toWorld = glm::translate(converter::PhysXVec3ToglmVec3(defgame::PLAYER1_START));
 		}
+		// shift up a bit
+		player->position += glm::vec3(0.0f, 0.5f, 0.0f);
 
 		headModel = std::make_unique<HeadModel>();
 		ballModel = std::make_unique<BallModel>();
 		handModel = std::make_unique<HandModel>();
+
+		// init fbo for shadow mapping
+		glGenFramebuffers(1, &depthMapFbo);
+		glGenTextures(1, &depthMap);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFbo);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// debug
+		plane = std::make_unique<TexturedPlane>();
+		plane->toWorld = glm::translate(glm::vec3(0,0,4)) * glm::scale(glm::vec3(2));
 
 		initAl();
 	}
@@ -263,6 +304,37 @@ protected:
 		alcCloseDevice(device);
 	}
 
+	void prerenderScene() override {
+		glm::mat4 projection = lightSpaceMatrix;
+		glm::mat4 view = glm::mat4(1.0f);
+
+		//// render to depth map
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFbo);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		// render scene
+
+		// TODO: make a shadow version
+		//player->renderControllers(projection, view, eye, eyePose);
+
+		renderPxScene(projection, view, ovrPosef(), true);
+
+		gridScene->shadowrenderSphereGrid(projection, view);
+		otherGridScene->shadowrenderSphereGrid(projection, view);
+
+
+		//// render the other playesr TODO:
+		shadowrenderOtherPlayer(projection, view);
+
+		// cleanup
+		glCullFace(GL_BACK);
+		glDisable(GL_CULL_FACE);
+		returnToFbo();
+
+	}
+
 	// score shown on hand
 	void renderScene(const glm::mat4 & projection, const glm::mat4 & headPose, ovrEyeType eye, ovrPosef eyePose) override {
 		glm::mat4 view = glm::inverse(player->toWorld() * headPose);
@@ -323,6 +395,7 @@ protected:
 
 		//gridScene->renderCubeGrid(projection, view, eyePos, glm::vec3(0.3f));
 		gridScene->renderSphereGrid(projection, view, eyePos, glm::vec3(0.3f));
+		otherGridScene->renderSphereGrid(projection, view, eyePos, glm::vec3(0.3f));
 
 		// render the other playesr TODO:
 		renderOtherPlayer(projection, view, eyePos);
@@ -330,20 +403,23 @@ protected:
 		// update headOrientation
 		//playerHeadOrientation = ovr::toGlm(eyePose.Orientation);
 		//headModel->render(projection, view, eyePos, sceneLight->lightPos, );
+
+		// debug
+		//plane->draw(projection, view, depthMap);
 	}
 
-	void renderPxScene(const glm::mat4 & projection, const glm::mat4 & view, const ovrPosef eyePose) {
+	void renderPxScene(const glm::mat4 & projection, const glm::mat4 & view, const ovrPosef eyePose, bool shadow = false) {
 		PxScene* scene;
 		PxGetPhysics().getScenes(&scene, 1);
 		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 		if (nbActors) {
 			std::vector<PxRigidActor*> actors(nbActors);
 			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-			renderPxActors(projection, view, &actors[0], static_cast<PxU32>(actors.size()), eyePose);
+			renderPxActors(projection, view, &actors[0], static_cast<PxU32>(actors.size()), eyePose, shadow);
 		}
 	}
 
-	void renderPxActors(const glm::mat4 & projection, const glm::mat4 & view, PxRigidActor** actors, const PxU32 numActors, const ovrPosef eyePose) {
+	void renderPxActors(const glm::mat4 & projection, const glm::mat4 & view, PxRigidActor** actors, const PxU32 numActors, const ovrPosef eyePose, bool shadow) {
 		PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
 		for (PxU32 i = 0; i < numActors; i++) {
 			const PxU32 nbShapes = actors[i]->getNbShapes();
@@ -369,12 +445,12 @@ protected:
 				}
 				if (isStatic) {
 					glm::mat4 toWorldscaled = toWorld * glm::scale(glm::vec3(0.5, 0.5, 0.5));
-					renderGeometryHolder(projection, view, h, toWorldscaled, eyePose, color);
+					renderGeometryHolder(projection, view, h, toWorldscaled, eyePose, color, shadow);
 					glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-					renderGeometryHolder(projection, view, h, toWorld, eyePose, color);
+					renderGeometryHolder(projection, view, h, toWorld, eyePose, color, shadow);
 					glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 				} else {
-					renderGeometryHolder(projection, view, h, toWorld, eyePose, color);
+					renderGeometryHolder(projection, view, h, toWorld, eyePose, color, shadow);
 				}
 			}
 		}
@@ -386,7 +462,6 @@ protected:
 	void update() override {
 		if (Step()) {
 			// disconnect
-			std::cerr << "connection failed" << std::endl;
 			glfwapp_isrunning = false;
 		}
 		RiftApp::update();
@@ -410,7 +485,6 @@ protected:
 		//AddSweepPushForce(scene, sweepDir, sweepPos, defgame::SWEEP_RADIUS, dist);
 
 		if (m_client.IsConnected()) {
-			std::cerr << "send sweep force" << std::endl;
 			SweepForceInputMessage* message = (SweepForceInputMessage*)m_client.CreateMessage((int)GameMessageType::SWEEP_FORCE_INPUT);
 			NetVec3 net_sweepDir, net_sweepPos;
 			converter::PhysXVec3ToNetVec3(sweepDir, net_sweepDir);
@@ -480,24 +554,28 @@ protected:
 		//alListenerfv(AL_ORIENTATION, listenerOri);
 	}
 
-	PX_FORCE_INLINE void renderGeometryHolder(const glm::mat4& projection, const glm::mat4& view, const PxGeometryHolder& h, const glm::mat4& toWorld, const ovrPosef eyePose, glm::vec3 color) {
-		renderGeometry(projection, view, h.any(), toWorld, eyePose, color);
+	PX_FORCE_INLINE void renderGeometryHolder(const glm::mat4& projection, const glm::mat4& view, const PxGeometryHolder& h, const glm::mat4& toWorld, const ovrPosef eyePose, glm::vec3 color, bool shadow) {
+		renderGeometry(projection, view, h.any(), toWorld, eyePose, color, shadow);
 	}
 
-	void renderGeometry(const glm::mat4& projection, const glm::mat4& view,const PxGeometry& geom, const glm::mat4& toWorld, const ovrPosef eyePose, glm::vec3 color) {
+	void renderGeometry(const glm::mat4& projection, const glm::mat4& view,const PxGeometry& geom, const glm::mat4& toWorld, const ovrPosef eyePose, glm::vec3 color, bool shadow) {
 		glm::vec3 eyePos = player->toWorld() * vec4(ovr::toGlm(eyePose.Position), 1.0f);
 		switch (geom.getType()) {
 		case PxGeometryType::eBOX: {
 			const PxBoxGeometry& boxGeom = static_cast<const PxBoxGeometry&>(geom);
 			glm::mat4 scale = glm::scale(2.0f * glm::vec3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z));
 			//glm::mat4 scale = glm::scale(glm::vec3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z));
-			basicShapeRenderer->renderCube(projection, view, toWorld * scale, eyePos, color);
+			if (!shadow)
+				basicShapeRenderer->renderCube(projection, view, toWorld * scale, eyePos, color);
+			else
+				basicShapeRenderer->shadowrenderCube(projection, view, toWorld * scale);
 			break;
 		}
 
 		case PxGeometryType::eSPHERE: {
 			// update scene light position. a little hacky since it is in the render loop
 			gridScene->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
+			otherGridScene->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
 			basicShapeRenderer->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
 			player->controllers->sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
 			sceneLight.lightPos = glm::vec3(toWorld * glm::vec4(0, 0, 0, 1));
@@ -508,8 +586,10 @@ protected:
 			//basicShapeRenderer->renderSphere(projection, view, toWorld * scale, eyePos, glm::vec3(1.0f));
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-			ballModel->render(projection, view, eyePos, sceneLight.lightPos, toWorld);
-
+			if (!shadow)
+				ballModel->render(projection, view, eyePos, sceneLight.lightPos, toWorld);
+			else
+				ballModel->shadowRender(projection, view, toWorld);
 			break;
 		}
 		case PxGeometryType::ePLANE: {
@@ -536,6 +616,12 @@ protected:
 		headModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation));
 		handModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.lhandPosition) * glm::mat4_cast(otherPlayer.lhandOrientation), ovrHand_Left);
 		handModel->render(projection, view, eyePos, sceneLight.lightPos, glm::translate(otherPlayer.rhandPosition) * glm::mat4_cast(otherPlayer.rhandOrientation), ovrHand_Right);
+	}
+
+	void shadowrenderOtherPlayer(const glm::mat4& projection, const glm::mat4& view) {
+		headModel->shadowRender(projection, view, glm::translate(otherPlayer.position) * glm::mat4_cast(otherPlayer.orientation));
+		handModel->shadowRender(projection, view, glm::translate(otherPlayer.lhandPosition) * glm::mat4_cast(otherPlayer.lhandOrientation), ovrHand_Left);
+		handModel->shadowRender(projection, view, glm::translate(otherPlayer.rhandPosition) * glm::mat4_cast(otherPlayer.rhandOrientation), ovrHand_Right);
 	}
 
 	// message stuff --------------------------------------------------------------

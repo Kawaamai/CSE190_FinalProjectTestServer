@@ -7,9 +7,10 @@ namespace defgame {
 	const PxReal SWEEP_RADIUS = .2f;
 	const PxReal SWEEP_DIST = 3.0f;
 	const PxReal SWEEP_FORCE = 40.0f;
+	//const PxReal SWEEP_FORCE = 20.0f;
 
-	const PxVec3 PLAYER1_START = PxVec3(0.0f, 0.5f, 4.75f);
-	const PxVec3 PLAYER2_START = PxVec3(0.0f, 0.5f, -4.75f);
+	const PxVec3 PLAYER1_START = PxVec3(0.0f, 0.0f, 4.75f);
+	const PxVec3 PLAYER2_START = PxVec3(0.0f, 0.0f, -4.75f);
 }
 
 static void AddSweepPushForce(
@@ -27,10 +28,10 @@ static void AddSweepPushForce(
 	PxReal inflation = 0.0f;
 	PxSphereGeometry sweepSphere = PxSphereGeometry(sweepRadius);
 
-	std::cerr << "sweep Dir: " << sweepDir.x << sweepDir.y << sweepDir.z << std::endl;
-	std::cerr << "sweep Pos: " << sweepPos.x << sweepPos.y << sweepPos.z << std::endl;
-	std::cerr << "sweep Radius" << sweepRadius << std::endl;
-	std::cerr << "sweep dist" << sweepDist << std::endl;
+	//std::cerr << "sweep Dir: " << sweepDir.x << sweepDir.y << sweepDir.z << std::endl;
+	//std::cerr << "sweep Pos: " << sweepPos.x << sweepPos.y << sweepPos.z << std::endl;
+	//std::cerr << "sweep Radius" << sweepRadius << std::endl;
+	//std::cerr << "sweep dist" << sweepDist << std::endl;
 
 	PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC);
 	if (nbActors) {
@@ -46,17 +47,24 @@ static void AddSweepPushForce(
 			for (PxU32 j = 0; j < nbShapes; j++) {
 				//const PxMat44 shapePose(PxShapeExt::getGlobalPose(*shapes[j], *actors[i]));
 				const PxTransform shapePose = PxShapeExt::getGlobalPose(*shapes[j], *actors[i]);
-				std::cerr << "shape pos: " << shapePose.p.x << " " << shapePose.p.y << " " << shapePose.p.z << std::endl;
+				//std::cerr << "shape pos: " << shapePose.p.x << " " << shapePose.p.y << " " << shapePose.p.z << std::endl;
 				PxTransform tm = PxShapeExt::getGlobalPose(*shapes[j], *actors[i]);
 				const PxGeometry geom = shapes[j]->getGeometry().any();
 				switch (geom.getType()) {
 				case PxGeometryType::eSPHERE:
 				case PxGeometryType::eBOX: {
 					PxU32 hitcount = PxGeometryQuery::sweep(sweepDir, sweepDist, sweepSphere, sweepTransform, geom, tm, hitInfo, hitFlags, 0.2f);
-					std::cerr << hitcount << std::endl;
-					std::cerr << hitInfo.distance << std::endl;
-					if (hitcount)
-						reinterpret_cast<PxRigidBody*>(actors[i])->addForce(sweepDir * sweepForce);
+					//std::cerr << hitcount << std::endl;
+					//std::cerr << hitInfo.distance << std::endl;
+					if (hitcount) {
+						PxVec3 force = sweepDir * sweepForce;
+						PxVec3 scaledForce = force * (sweepDist + .5f);
+						if (sweepDist > .5f)
+							force = scaledForce;
+						std::cerr << "sweep force magnitude: " << force.magnitude() << std::endl;
+						std::cerr << "sweep force magnitude with dist: " << scaledForce.magnitude() << std::endl;
+						reinterpret_cast<PxRigidBody*>(actors[i])->addForce(force);
+					}
 					// TODO: add in early break
 					break;
 				}

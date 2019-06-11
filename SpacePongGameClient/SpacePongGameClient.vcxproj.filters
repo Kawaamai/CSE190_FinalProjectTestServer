@@ -180,6 +180,9 @@
     <ClInclude Include="..\Minimal\HandModel.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Minimal\ShadowRenderingHeader.h">
+      <Filter>Application</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Minimal\Minimal.rc">
@@ -320,6 +323,15 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Minimal\blinnPhongColor.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\simpleDepthMapShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\simpleDepthMapShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Minimal\osimpleDepthMapShader.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

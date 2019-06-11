@@ -31,6 +31,8 @@ protected:
 	//PxReal stackZ = 2.0f;
 	PxReal stackZ = -1.0f;
 
+	PxRigidDynamic* mainball;
+
 	PxU32 m_numActors = 0;
 	std::vector<PxRigidActor*> m_actors;
 
@@ -80,14 +82,19 @@ protected:
 		PxShape* shape = gPhysics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *gMaterial);
 		for (PxU32 i = 0; i < size; i++)
 		{
-			for (PxU32 j = 0; j < size - i; j++)
+			//for (PxU32 j = 0; j < size - i; j++)
+			for (PxU32 j = 0; j < size; j++)
 			{
-				PxTransform localTm(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
-				PxTransform forwardOffset(PxVec3(0.0f, 0.0f, 0.5));
-				PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm).transform(forwardOffset));
+				//PxTransform localTm(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
+				PxTransform localTm(PxVec3(PxReal(j * 2), PxReal(i * 2 + 1), 0) * halfExtent);
+				PxTransform centerTm(PxVec3(-PxReal(size / 2.f), -PxReal(size), 0.0f) * halfExtent);
+
+				PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(centerTm).transform(localTm));
 				body->attachShape(*shape);
+				body->setLinearDamping(.0f);
+				body->setAngularDamping(.0f);
 				//PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
-				PxRigidBodyExt::updateMassAndInertia(*body, 5.0f);
+				PxRigidBodyExt::updateMassAndInertia(*body, 2.0f);
 				gScene->addActor(*body);
 			}
 		}
@@ -95,12 +102,16 @@ protected:
 	}
 
 	void addBall(PxTransform tm = PxTransform(PxVec3(0.0))) {
-		PxShape* shape = gPhysics->createShape(PxSphereGeometry(.2f), *gMaterial);
+		PxMaterial* ballMaterial = gPhysics->createMaterial(0.0f, 0.0f, 1.0f);
+		PxShape* shape = gPhysics->createShape(PxSphereGeometry(.3f), *ballMaterial);
 		PxTransform localTm(PxVec3(0.0));
 		PxRigidDynamic* body = gPhysics->createRigidDynamic(tm.transform(localTm));
 		body->attachShape(*shape);
-		PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+		PxRigidBodyExt::updateMassAndInertia(*body, 2.5f);
+		body->setLinearDamping(.0f);
+		body->setAngularDamping(.0f);
 		gScene->addActor(*body);
+		mainball = body;
 		shape->release();
 	}
 
@@ -123,7 +134,7 @@ protected:
 			pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 		}
 		//gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-		gMaterial = gPhysics->createMaterial(0.0f, 0.3f, 1.0f);
+		gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 1.0f);
 
 		// testing
 		//PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
@@ -131,7 +142,7 @@ protected:
 
 		// TODO: determine if we need to use a different material for the walls
 		// create side walls
-		PxReal sideWallx = 0.2f, sideWally = 3.0f, sideWallz = 12.0f;
+		PxReal sideWallx = 0.25f, sideWally = 3.0f, sideWallz = 12.0f;
 		PxReal sideWallRadius = 7.24264f / 2.0f;
 		PxShape* sideWallShape = gPhysics->createShape(PxBoxGeometry(sideWallx / 2.0f, sideWally / 2.0f, sideWallz / 2.0f), *gMaterial);
 		for (PxU32 i = 0; i < 8; i++) {
@@ -177,8 +188,10 @@ protected:
 		// TODO: the sizes are kinda wrong on the rigid bodies
 		//createStack(PxTransform(PxVec3(0, 0, 3.0f)), 3, .1f); // small cubes instead
 		//createStack(PxTransform(PxVec3(0, 0, 3.0f)), 3, .2f); // small cubes instead
-		createStack(PxTransform(PxVec3(0, -0.5f, 3.0f)), 5, .2f); // small cubes instead
-		createStack(PxTransform(PxVec3(0, -0.0f, -3.0f)), 5, .2f); // small cubes instead
+		//createStack(PxTransform(PxVec3(0, -0.5f, 3.0f)), 5, .2f); // small cubes instead
+		//createStack(PxTransform(PxVec3(0, -0.0f, -3.0f)), 5, .2f); // small cubes instead
+		createStack(PxTransform(PxVec3(0, 0, 3.0f)), 3, .2f); // small cubes instead
+		createStack(PxTransform(PxVec3(0, 0, -3.0f)), 3, .2f); // small cubes instead
 		addBall();
 
 		if(!interactive)

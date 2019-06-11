@@ -25,6 +25,7 @@
 #pragma warning( default : 4068 4244 4267 4065)
 
 #include "oglShaderAttributes.h"
+#include "ShadowRenderingHeader.h"
 
 namespace BasicColors {
 	static const glm::vec3 orangeColor = glm::vec3(238.0f, 127.0f, 27.0f) / 255.0f;
@@ -54,6 +55,14 @@ public:
 		const glm::vec3& pt2,
 		const glm::vec3 & eyePos,
 		glm::vec3 color = BasicColors::orangeColor);
+	void shadowrenderSphere(const glm::mat4& projection,
+		const glm::mat4& view,
+		const glm::mat4& toWorld,
+		glm::vec3 color = BasicColors::orangeColor);
+	void shadowrenderCube(const glm::mat4& projection,
+		const glm::mat4& view,
+		const glm::mat4& toWorld,
+		glm::vec3 color = BasicColors::orangeColor);
 
 private:
 	oglplus::Program prog;
@@ -73,5 +82,7 @@ private:
 	GLuint lineVao, lineVbo;
 	static const int numLinePoints = 2;
 	glm::vec3 lineVertices[numLinePoints] = { glm::vec3(1.0), glm::vec3(0.0) };
+
+	Shader shadowShader = Shader("../Minimal/osimpleDepthMapShader.vert", "../Minimal/simpleDepthMapShader.frag");
 };
 

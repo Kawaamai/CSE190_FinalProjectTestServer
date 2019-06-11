@@ -41,17 +41,7 @@ public:
 	glm::mat4 toWorld;
 	GLuint textureId;
 
-	enum LIGHTING_MODE {
-		REGULAR, LIGHTING_FALLOFF, VIGNETTE
-	};
-	std::map<LIGHTING_MODE, LIGHTING_MODE> lightingModeMap = {
-		{REGULAR, LIGHTING_FALLOFF}, {LIGHTING_FALLOFF, VIGNETTE}, {VIGNETTE, REGULAR}
-	};
-	LIGHTING_MODE lightingMode = REGULAR;
-
-	Shader shader = Shader("basicTexture.vert", "basicTexture.frag");
-	Shader lightingFalloffShader = Shader("brightnessFalloff.vert", "brightnessFalloff.frag");
-	Shader vignetteShader = Shader("vignette.vert", "vignette.frag");
+	Shader shader = Shader("../Minimal/basicTexture.vert", "../Minimal/basicTexture.frag");
 
 	void draw(const glm::mat4& projection, const glm::mat4& view, GLuint textureId, const glm::vec3 eyePos);
 	void draw(const glm::mat4& projection, const glm::mat4& view, GLuint textureId);

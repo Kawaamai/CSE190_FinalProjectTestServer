@@ -78,6 +78,9 @@ void BasicColorGeometryScene::renderSphere(
 	Uniform<glm::mat4>(prog, "ModelMatrix").Set(toWorld);
 	Uniform<glm::vec3>(prog, "color").Set(color);
 	Uniform<glm::vec3>(prog, "viewPos").Set(eyePos);
+	Uniform<glm::mat4>(prog, "LightSpaceMatrix").Set(lightSpaceMatrix);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
 	sphereVao.Bind();
 	sphere.Draw(1);
 }
@@ -98,6 +101,9 @@ void BasicColorGeometryScene::renderCube(
 	Uniform<glm::mat4>(prog, "ModelMatrix").Set(toWorld);
 	Uniform<glm::vec3>(prog, "color").Set(color);
 	Uniform<glm::vec3>(prog, "viewPos").Set(eyePos);
+	Uniform<glm::mat4>(prog, "LightSpaceMatrix").Set(lightSpaceMatrix);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
 	cubeVao.Bind();
 	cube.Draw(1);
 }
@@ -130,5 +136,23 @@ void BasicColorGeometryScene::renderLine(
 	glDrawArrays(GL_LINES, 0, numLinePoints);
 	glBindVertexArray(0);
 	glLineWidth(1.0f);
+}
+
+void BasicColorGeometryScene::shadowrenderSphere(const glm::mat4 & projection, const glm::mat4 & view, const glm::mat4 & toWorld, glm::vec3 color) {
+	shadowShader.use();
+	shadowShader.setMat4("ProjectionMatrix", projection);
+	shadowShader.setMat4("CameraMatrix", view);
+	shadowShader.setMat4("ModelMatrix", toWorld);
+	sphereVao.Bind();
+	sphere.Draw(1);
+}
+
+void BasicColorGeometryScene::shadowrenderCube(const glm::mat4 & projection, const glm::mat4 & view, const glm::mat4 & toWorld, glm::vec3 color) {
+	shadowShader.use();
+	shadowShader.setMat4("ProjectionMatrix", projection);
+	shadowShader.setMat4("CameraMatrix", view);
+	shadowShader.setMat4("ModelMatrix", toWorld);
+	cubeVao.Bind();
+	cube.Draw(1);
 }
 

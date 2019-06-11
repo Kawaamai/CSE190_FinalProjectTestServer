@@ -163,6 +163,7 @@
     <ClInclude Include="..\Minimal\RiftApp.h" />
     <ClInclude Include="..\Minimal\RingBuffer.h" />
     <ClInclude Include="..\Minimal\Shader.h" />
+    <ClInclude Include="..\Minimal\ShadowRenderingHeader.h" />
     <ClInclude Include="..\Minimal\Skybox.h" />
     <ClInclude Include="..\Minimal\SphereScene.h" />
     <ClInclude Include="..\Minimal\stb_image.h" />
@@ -221,8 +222,11 @@
     <None Include="..\Minimal\oglBasicColor.vert" />
     <None Include="..\Minimal\oglBlinnPhongColor.frag" />
     <None Include="..\Minimal\oglBlinnPhongColor.vert" />
+    <None Include="..\Minimal\osimpleDepthMapShader.vert" />
     <None Include="..\Minimal\shader.frag" />
     <None Include="..\Minimal\shader.vert" />
+    <None Include="..\Minimal\simpleDepthMapShader.frag" />
+    <None Include="..\Minimal\simpleDepthMapShader.vert" />
     <None Include="..\Minimal\skybox.frag" />
     <None Include="..\Minimal\skybox.vert" />
     <None Include="..\Minimal\skybox\back.ppm" />

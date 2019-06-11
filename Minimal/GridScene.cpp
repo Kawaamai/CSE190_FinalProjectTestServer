@@ -82,6 +82,9 @@ void GridScene::renderSphereGrid(
 	Uniform<glm::mat4>(prog, "ModelMatrix").Set(toWorld);
 	Uniform<glm::vec3>(prog, "color").Set(color);
 	Uniform<glm::vec3>(prog, "viewPos").Set(eyePos);
+	Uniform<glm::mat4>(prog, "LightSpaceMatrix").Set(lightSpaceMatrix);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
 	sphereVao.Bind();
 	sphere.Draw(instanceCount);
 }
@@ -101,6 +104,27 @@ void GridScene::renderCubeGrid(
 	Uniform<glm::mat4>(prog, "ModelMatrix").Set(toWorld);
 	Uniform<glm::vec3>(prog, "color").Set(color);
 	Uniform<glm::vec3>(prog, "viewPos").Set(eyePos);
+	Uniform<glm::mat4>(prog, "LightSpaceMatrix").Set(lightSpaceMatrix);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	cubeVao.Bind();
+	cube.Draw(instanceCount);
+}
+
+void GridScene::shadowrenderSphereGrid(const glm::mat4 & projection, const glm::mat4 & view) {
+	shadowShader.use();
+	shadowShader.setMat4("ProjectionMatrix", projection);
+	shadowShader.setMat4("CameraMatrix", view);
+	shadowShader.setMat4("ModelMatrix", toWorld);
+	sphereVao.Bind();
+	sphere.Draw(instanceCount);
+}
+
+void GridScene::shadowrenderCubeGrid(const glm::mat4 & projection, const glm::mat4 & view) {
+	shadowShader.use();
+	shadowShader.setMat4("ProjectionMatrix", projection);
+	shadowShader.setMat4("CameraMatrix", view);
+	shadowShader.setMat4("ModelMatrix", toWorld);
 	cubeVao.Bind();
 	cube.Draw(instanceCount);
 }
