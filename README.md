@@ -16,8 +16,8 @@ populate `yojimbo` and `PhysX`
 git submodule update --init --recursive
 ```
 
-build with `premake5 solution`, then build `yojimbo` as 
+build `PhysX`:
 
-build `PhysX`: build all of `PhysXSDK` as:
+- build all of `PhysXSDK` filter + `SnippetUtils` project on Release and dynamic linked.
 
-- `release -> Runtime Library-> Multi-threaded Dll (/MD)`
+- `Properties -> C/C++ -> Runtime Library-> Multi-threaded Dll (/MD)`
