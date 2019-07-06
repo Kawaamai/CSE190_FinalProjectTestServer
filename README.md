@@ -4,6 +4,8 @@ For CSE 190
 
 by Alan Mai
 
+[Blog Posts](https://github.com/Kawaamai/CSE190_FinalProjectBlog)
+
 ## Source Code
 
 ```
