@@ -6,6 +6,8 @@ by Alan Mai
 
 [Blog Posts](https://github.com/Kawaamai/CSE190_FinalProjectBlog)
 
+[Project Video](https://www.youtube.com/watch?v=DzfWp2AYeEE&list=PLYZSzgYHJxiyt9ymwjVNnx9wq4d-WeQ9R&index=11)
+
 ## Source Code
 
 ```
